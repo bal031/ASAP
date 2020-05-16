@@ -5,6 +5,7 @@ Module that handles all interaction with the Schedule of Classes database hosted
 # from LogASAP import setup_log, log, LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR, LOG_CRITICAL
 
 from requests import post, get
+from urllib.parse import urlencode
 from traceback import format_exc
 from time import time
 from Keys import auth_key # used to generate a new access_token 
@@ -63,7 +64,7 @@ def getSection(termCode : str, subjectCode : str, courseCode : int):
     """
     return makeRequest(base_url + termCode + ',' + subjectCode + ',' + str(courseCode))
 
-def search(termCode : str, **kwargs):
+def search(**kwargs):
 # subjectCodes=None, courseCodes=None, departments=None, instructor=None, instructorPID=None, title=None, 
             # days, openSection : bool, startTime,
             # endTime, limit, offset, bldgCodes, roomCodes, printFlag):
@@ -71,7 +72,7 @@ def search(termCode : str, **kwargs):
     Queries for classes based on query parameter criteria. Only returns high level data that can be used to query for individual classes.
 
     Valid Arguments: (all inputs should be strings)
-        termCode: A term code (eg: FA16)
+        REQURIED--> termCode: A term code (eg: FA16) <--------------------------------
         subjectCodes: List of subject codes separated by commas no spaces
         courseCodes: List of course codes separated by commas no spaces
         departments: List of department codes separated by commas no spaces
@@ -90,9 +91,10 @@ def search(termCode : str, **kwargs):
 
     Returns: Only high level data that can be used to query for individual classes
     """
-    pass # TODO DOES NOT WORK 
-    url = base_url + '/search?'
-    return makeRequest(url, data=kwargs)
+    # raise NotImplementedError
+    url = base_url + 'search?' + urlencode(kwargs)
+    print(url)
+    return makeRequest(url)
 
 
 
@@ -120,8 +122,11 @@ def getInstructors(sectionID : int):
     return makeRequest(base_url + str(sectionID) + '/instructors')
 
 
-def makeRequest(url, data=None):
+def makeRequest(url : str):
     """actually makes the get request
+
+    Arguments:
+        url: string of the url
 
     Returns: 
 
@@ -130,7 +135,7 @@ def makeRequest(url, data=None):
         "authorization" : "Bearer " + getAccessToken() # do this everytime tokens expire
         }
     try:
-        response = get(url, data=data, headers=headers).json()
+        response = get(url, headers=headers).json()
     except:
         response = None
         print('somoething went wrong: \n\n' + format_exc()) # TODO error handling/logging module
@@ -167,5 +172,6 @@ def getAccessToken():
 if __name__ == "__main__":
     print("attempting to make a request...\n\n")
     print(getSection(termCode='SP20', subjectCode='CSE',courseCode='110'))
+    print(search(termCode='SP20', subjectCodes="CSE"))
 
 
