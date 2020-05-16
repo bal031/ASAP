@@ -55,9 +55,13 @@ def setup_log(level=logging.DEBUG, destination=None):
     #                 format='%(asctime)s %(name)s [%(levelname)s] %(message)s')
                     # filename='/tmp/myapp.log',
                     # filemode='w')
-    logging.config.fileConfig('/home/nate/ASAP/Log/logging.conf')
+    # logging.config.fileConfig('/home/nate/ASAP/Log/logging.conf')   
+    
     LogASAP.logger = logging.getLogger('LOGASAP')  # reassign program logger
 
 
 class LogASAP:
     logger = logging.getLogger() # gets the default root logger until this is changed
+
+setup_log()
+log("testing")
