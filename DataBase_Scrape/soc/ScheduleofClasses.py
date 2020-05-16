@@ -8,11 +8,44 @@ from requests import post, get
 from traceback import format_exc
 from time import time
 from Keys import auth_key # used to generate a new access_token 
+from threading import current_thread, Lock
 
 # constants that will be used repeatedly. DO NOT change. 
 access_token = None
 end_time = 0
 base_url = "https://api.ucsd.edu:8243/get_schedule_of_classes/v1/classes/" # base url for any query 
+lock = Lock() # reentrant lock can be acquired multiple times by the same thread
+
+def synchronized(func):
+    """
+    Given a method, return a new method that acquires the the lock before calling the method.
+    Then release the lock after the method has returned. This blocks other threads from making a call to the object
+
+    """
+    def wrapper(*args, **kwargs):
+        """Synchronized wrapper"""
+        # with self.lock:
+        #     return func(self, *args, **kwargs)
+        try:
+            if lock.acquire(0):
+                # log('{thread} ACQUIRED the lock for {type} {obj}'.format(thread=current_thread().name, type=type(self), \
+                # obj=self.name), level=LOG_DEBUG) # Don't need this intensive logging 
+                return func(*args, **kwargs)
+            else:
+                print("couldn't acquire lock")
+                # log('{thread} couldn\'t acquire the lock for {func_name}'.format(\
+                    # thread=current_thread().name, func_name=func.func_name), level=LOG_ERROR)
+        except: #Exception as e:
+            # log('Synchronization failure in thread: {thread} for {func_name}'.format(\
+            #     thread=current_thread().name, func_name=func.func_name), level=LOG_ERROR, email=False,\
+            #     err_str=format_exc()) # print a stack trace for the exception
+            print("there was an exception \n\n" + format_exc())
+        finally: 
+            if lock.locked: # if lock is acquired, release it
+                # log('{thread} RELEASED the lock for {type} {obj}'.format(thread=current_thread().name, type=type(self),\
+                # obj=self.name), level=LOG_DEBUG)
+                lock.release() # let another thread have a turn
+    return wrapper
 
 def getSectionByID(sectionID : int):
     """ 
@@ -103,10 +136,11 @@ def makeRequest(url, data=None):
         print('somoething went wrong: \n\n' + format_exc()) # TODO error handling/logging module
     return response
 
+@synchronized
 def getAccessToken():
     """
     Description: Handles requesting Access Tokens for the Schedule of Classes API
-
+    Note: this is a synchronized method and is therefore thread safe. 
     Returns: access token as a str or None if the request fails.
     """
     global access_token, end_time # writing to these global variables
