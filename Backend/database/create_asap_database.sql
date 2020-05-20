@@ -123,4 +123,3 @@ ALTER TABLE `current_additional_meeting` ADD CONSTRAINT `current_additional_meet
 ALTER TABLE `cape_review` ADD CONSTRAINT `cape_review_fk0` FOREIGN KEY (`courseID`) REFERENCES `course`(`courseID`);
 
 ALTER TABLE `cape_review` ADD CONSTRAINT `cape_review_fk1` FOREIGN KEY (`professorID`) REFERENCES `professor`(`professorID`);
-
