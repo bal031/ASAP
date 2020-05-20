@@ -1,6 +1,8 @@
 # This module is used for communicating with the asap_database. Use the 
+# get_database() method to open a connection and the close_database() method
 # to close it once finished.
 #
+# NOTE: The following methods should not be vulnerable to SQL injection, but 
 #   they have not been tested. Proceed with caution.  
 
 import mysql.connector
