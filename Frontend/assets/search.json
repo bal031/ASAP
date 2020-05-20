@@ -1,0 +1,7 @@
+ [
+           {"value":"Hamburger", "title":"Hamburg title", "url":"#", "text":"Lorem ipsum dolor sit amet, consectetur ..."},
+          {"value":"New Yorker", "title":"New York", "url":"#", "text":"Ut enim ad minim veniam, quis nostrud ..."},
+              {"value":"Moscower", "title":"Moscow", "url":"#", "text":"Duis aute irure dolor in reprehenderit ..."},
+              {"value":"Amsterdammer", "title":"Amsterdam", "url":"#", "text":"Excepteur sint occaecat cupidatat non ..."}
+]
+  
