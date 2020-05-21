@@ -326,17 +326,3 @@ def insert_one_time_meeting( meeting_type, meeting_date, start_time, end_time, r
     cursor.execute(sql, meeting)
     database.commit()
     cursor.close()
-
-
-# The following is used to test the methods. TODO: Delete in production build.
-asap_database = get_database()
-insert_cape("cse", "100", "Ord, Rick", 2.7, 2.3, 14.7, 80.4, 99.7, 77.43, "WI17", asap_database)
-print(get_course_id("notDep", "doesntExist", asap_database))
-print(get_professor_id("Gillespie, Test", asap_database))
-cse100a00 = get_section_id("cse", "100", "Gillespie, Test", "LE", "A00", "SP20", asap_database)
-wlh200a = get_room_id("wlh","200a", asap_database)
-print(cse100a00)
-print(wlh200a)
-insert_one_time_meeting("Fi", "2020-05-19", "12:00:00", "14:59:00", wlh200a, cse100a00, asap_database)
-insert_recurring_meeting("mwF", "12:00:00", "14:59:00", wlh200a, cse100a00, asap_database)
-close_database(asap_database)
