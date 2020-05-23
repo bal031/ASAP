@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Triton Autoscheduler</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <link href="jquery/jquery-ui.css" rel="stylesheet">
+        <script src="jquery.js"></script>
+        <script src="js/uikit-icons.min.js"></script>
+        <link rel="stylesheet" href="css/components/autocomplete.css">
+        <script src="js/components/autocomplete.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="css/uikit.min.css" />
+        <script src="js/uikit.min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.css">
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css">
+        <link rel="stylesheet" type="text/css" href="dist/tui-calendar.css">
+        <link rel="stylesheet" type="text/css" href="css/default.css">
+        <link rel="stylesheet" type="text/css" href="css/icons.css">
+
+        <style>
+            
+            #selectable .ui-selecting { background: rgb(160, 160, 160); }
+            #selectable .ui-selected { background: rgb(104, 104, 104); color: white; }
+            
+            #course-list .ui-selecting { background: rgb(160, 160, 160); }
+            #course-list .ui-selected { background: rgb(104, 104, 104); color: white; }
+            
+            </style>
+            <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+            <script>
+                $(function() {
+                   $( "#selectable" ).selectable({
+                      selected: function() {
+                         var result = $( "#result" ).empty();
+                         $( ".ui-selected", this ).each(function() {
+                            var myId = $(this).prop('id');
+                            document.getElementById("add_class").onclick = function() {fillList(myId)};
+                         });
+                      }
+                   });
+                });
+             </script>
+
+
+           
+        
+    </head>
+    <body>
+        <script>
+            $(function() {
+               $( "#course-list" ).selectable({
+                  selected: function() {
+                     var result = $( "#result" ).empty();
+                     $( ".ui-selected", this ).each(function() {
+                        var myId = $(this).prop('id');
+                        document.getElementById("remove_class").onclick = function() {document.getElementById(myId).remove()};
+                        
+                     });
+                  }
+               });
+            });
+         </script>
+        <div class="uk-container-medium uk-container-center uk-margin-top">                
+               
+            <div class="uk-grid-seperator uk-text-center">
+                <img data-src="assets/logo1.png"
+     sizes="(min-width: 30px) 50px, 100vw" width="90" height="" alt="" uk-align="middle" uk-img>
+                <img data-src="assets/ucsd-header-1.jpg"
+     sizes="(min-width: 100px) 400px, 100vw" width="300" height="" alt="" uk-align="middle" uk-img>
+            </div>
+            <div class="uk-margin-small-top ">
+                <ul class="uk-flex-center" uk-tab>
+                    <li class="uk-active"><a href="#">Home</a></li>
+                    <li><a href="#">What's New</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Login</a></li>
+                </ul>
+            </div>
+            <div class="uk-container uk-container-center uk-container-small uk-margin-bottom">
+               
+                    <div class="uk-flex uk-flex-center">
+                        <input class="uk-input uk-text-left uk-width" type="text" id="search" placeholder="Class Search">
+                        
+                        <button onclick="search()" class="uk-button uk-button-primary uk-text-right">Search</button>                        
+                    </div>
+                </div>
+                <div class="uk-container uk-container-small uk-container-center ">
+                    <div class="uk-child-width-1-2@s" uk-grid>
+                        
+                       <div id="selectable" class="uk-panel uk-panel-scrollable">                      
+                        <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Search Result</div>
+                      
+                                         
+                   
+                       </div> 
+                       
+                            
+                       
+                        <div id="course-list" class="uk-background-muted uk-scrollable-box">                                                       
+                            <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Must Have  &nbsp&nbsp&nbsp&nbsp &nbsp&nbsp&nbsp&nbsp  Class</div>
+                                               
+                    </div>               
+                
+                </div>  
+                   
+                    </div>
+                
+                         
+                   
+                </div>
+                <ul uk-accordion class="uk-container uk-container-center uk-container-small uk-margin-bottom">
+                    <li class="uk-close">
+                        <a class="uk-accordion-title uk-tile-muted" href="#">Add Personal Event</a>
+                        <div class="uk-accordion-content">
+                           <form>
+                            <div class="uk-grid" uk-grid>
+                                <div class="uk-grid-small uk-child-width-auto">
+                                    <label><input class="uk-checkbox" type="checkbox" > Monday</label>
+                                    <label><input class="uk-checkbox" type="checkbox"> Tuesday</label>
+                                    <label><input class="uk-checkbox" type="checkbox" > Thursday</label>
+                                    <label><input class="uk-checkbox" type="checkbox"> Wednesday</label>
+                                    <label><input class="uk-checkbox" type="checkbox" > Thursday</label>
+                                    <label><input class="uk-checkbox" type="checkbox"> Friday</label>
+                                    <label><input class="uk-checkbox" type="checkbox" > Saturday</label>
+                                    <label><input class="uk-checkbox" type="checkbox"> Sunday</label>
+                                </div>
+                                <div class="uk-form-controls uk-width-1-4@s">
+                                <label>From:</label> <input class="uk-input" id="form-stacked-text" type="text" placeholder="Some text..."> <select class="uk-select uk-width-1-2@s">
+                                    <option>AM</option>
+                                    <option>PM</option>
+                                </select>
+                                </div>
+                               
+                                <div class="uk-form-controls uk-width-1-4@s">
+                                    <label>To: </label>
+                                    <input class="uk-input" id="form-stacked-text" type="text" placeholder="Some text..."> <select class="uk-select uk-width-1-2@s">
+                                        <option>AM</option>
+                                        <option>PM</option>
+                                    </select>
+                                </div>
+                                <div class="uk-form-controls uk-width-1-4@s">
+                                    <p></p>
+                                    <button class="uk-button uk-button-secondary">Add Event</button>
+                                </div>
+                               
+                            </div>                    
+                                
+                            
+                           </form>
+                            
+                        </div>
+                    </li>
+                    </ul>
+                    
+                <div class="uk-margin-small uk-flex-center uk-text-center">
+                    <div class="uk-button-group">
+                        <button id="add_class" onclick="" class="uk-button uk-button-secondary">Add</button>
+                        <button id="remove_class" onclick="" class="uk-button uk-button-secondary">Remove</button>
+                        <button class="uk-button uk-button-secondary">Clear</button>
+                        <button class="uk-button uk-button-secondary " type="button" uk-toggle="target: #modal-example">Done</button>
+                    </div>
+                </div>
+                </form>
+            
+            </div>
+             
+            
+            <div id="modal-example" uk-modal>
+                <div class="uk-modal-dialog uk-modal-body">
+                    <h2 class="uk-modal-title">Selections</h2>
+                    <form>
+                        <fieldset class="uk-fieldset">
+                            <div style="float:left;margin-right:30px;">
+                            <p style="font-size:10px">Transportation</p>
+                                <select style="width:105px">
+                                    <option value="none">None</option>
+                                    <option value="walk">Walking</option>
+                                    <option value="bike">Bike</option>
+                                    <option value="car">Car</option>
+                                </select>
+                            </div>
+                            <div style="float:left;margin-right:30px">
+                            <p style="font-size:10px">Professor Rating</p>
+                                <select>
+                                    <option value="false">Not Important</option>
+                                    <option value="none" selected>None</option>
+                                    <option value="true">Important</option>
+                                </select>
+                            </div>
+                            <div style="float:left;margin-right:30px">
+                            <p style="font-size:10px">Average GPA</p> 
+                                <select>
+                                    <option value="false">Not Important</option>
+                                    <option value="none" selected>None</option>
+                                    <option value="true">Important</option>
+                                </select>   
+                            </div>
+                            <div style="float:left;margin-right:30px">
+                            <p style="font-size:10px">Average Time Spent</p>
+                                <select>
+                                    <option value="false">Not Important</option>
+                                    <option value="none" selected>None</option>
+                                    <option value="true">Important</option>
+                                </select>
+                            </div>
+                            <div style="float:left;margin-right:30px">
+                           
+                            <p style="font-size:10px">Gap Between Classes</p> 
+                                <select>
+                                    <option value="false">Not Important</option>
+                                    <option value="none" selected>None</option>
+                                    <option value="true">Important</option>
+                                </select> 
+                            </div>
+                            <div style="float:left;margin-right:30px">
+                                
+                            <p style="font-size:10px">Class Days</p>   
+                                <select>
+                                    <option value="false">Not Important</option>
+                                    <option value="none" selected>None</option>
+                                    <option value="true">Important</option>
+                                </select>
+                            </div>
+                            <div style="float:left;margin-right:30px">
+                                
+                            <p style="font-size:10px">Time Preference</p> 
+                                <select>
+                                    <option value="false">Not Important</option>
+                                    <option value="none" selected>None</option>
+                                    <option value="true">Important</option>
+                                </select>
+                            </div>                            
+                    
+                        </fieldset>
+                    </form>
+                    <p class="uk-text-right">
+                        <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                        <button class="uk-button uk-button-primary" type="button">Generate Schedule</button>
+                    </p>
+                </div>
+            </div>
+            <div class="uk-container uk-container-medium uk-container-center uk-background-muted">
+                <div id="menu">
+                    <span id="menu-navi">
+                      <button type="button" class="btn btn-default btn-sm move-today" data-action="move-today">Today</button>
+                      <button type="button" class="btn btn-default btn-sm move-day" data-action="move-prev">
+                        <i class="calendar-icon ic-arrow-line-left" data-action="move-prev"></i>
+                      </button>
+                      <button type="button" class="btn btn-default btn-sm move-day" data-action="move-next">
+                        <i class="calendar-icon ic-arrow-line-right" data-action="move-next"></i>
+                      </button>
+                    </span>
+                    <span id="renderRange" class="render-range"></span>
+                  </div>
+                               
+                <div id="calendar"></div>
+                
+            <div uk-lightbox>   
+                <p class="uk-text-right">
+                              
+                    <a class="uk-button uk-button-primary" href="view_schedule.html" type="button">View Schedule</a>
+                   
+                </p>
+            </div>
+            </div>
+          
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+        <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
+        <script src="https://uicdn.toast.com/tui.time-picker/v2.0.3/tui-time-picker.min.js"></script>
+        <script src="https://uicdn.toast.com/tui.date-picker/v4.0.3/tui-date-picker.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chance/1.0.13/chance.min.js"></script>
+        <script src="dist/tui-calendar.js"></script>
+        <script src="js/data/calendars.js"></script>
+        <script src="js/data/schedules.js"></script>
+           
+         
+        </div>
+
+        </div>
+
+        
+            <script src="js/app-custom.js"></script>
+        <script src="jquery.js"></script>
+<script src="jquery/jquery-ui.js"></script>
+<script>var availableTags = [
+    "CSE",
+    "BDE",
+    "ENG",
+    "CSE 12",
+    "CSE 21",
+    "ECE 15",
+    "CSE 100",
+    "CSE 110",
+    "CSE 140L",
+    "ECE 144",
+    "WAR 1",
+    "REL 101",
+    
+];
+$( "#search" ).autocomplete({
+    source: availableTags
+});
+</script>
+
+<script>
+    $( function() {
+      $( "#selectable" ).selectable();
+    } );
+    </script>
+    
+    <script>
+        $( function() {
+          $( "#course_list" ).selectable();
+        } );
+        </script>
+<script>
+    $(document).ready(function(){
+      $("#myInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+    </script>
+    <script>
+    function fillTable(courseName) {
+  document.getElementById("course-list").innerHTML += "<tr><td>"+courseName+"</td><td><input type='checkbox'></td></td></tr>";
+  document.getElementById(courseName).remove();
+}
+</script>
+<script>
+    function fillList(courseName) {
+        var name = new String(courseName);
+        var id = "\"" + courseName +"\""; 
+  document.getElementById("course-list").innerHTML += "<li id="+id+">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type=\'checkbox\'>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+courseName+"</li>";
+  document.getElementById(courseName).remove();
+}
+</script>
+
+<script>
+    function search(){
+    $(document).ready(function(){
+       
+      $('#selectable').html('');
+      $('#state').val('');
+      var searchField = $('#search').val();
+      var expression = new RegExp(searchField, "i");
+      $.getJSON('search.json', function(data) {
+       $.each(data, function(key, value){
+        if (value.name.search(expression) != -1 || value.location.search(expression) != -1)
+        {
+            var id = "\"" + value.name +"\"";   
+         $('#selectable').append("<li id=" +id+">"+value.name+"</li>");
+        }
+       });   
+      });
+    
+
+    });
+}
+    </script>
+    </body>
+    
+
+</html>
