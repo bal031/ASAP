@@ -83,14 +83,14 @@
                     <div class="uk-flex uk-flex-center">
                         <input class="uk-input uk-text-left uk-width" type="text" id="search" placeholder="Class Search">
                         
-                        <button onclick="search()" class="uk-button uk-button-primary uk-text-right">Search</button>                        
+                        <button onclick="search()" id="search_btn" class="uk-button uk-button-primary uk-text-right">Search</button>                        
                     </div>
                 </div>
                 <div class="uk-container uk-container-small uk-container-center ">
                     <div class="uk-child-width-1-2@s" uk-grid>
                         
                        <div id="selectable" class="uk-panel uk-panel-scrollable">                      
-                        <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Search Result</div>                   
+                        <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Search Result</div>                  
                                          
                    
                        </div> 
@@ -236,7 +236,7 @@
                     </form>
                     <p class="uk-text-right">
                         <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-                        <button class="uk-button uk-button-primary" type="button">Generate Schedule</button>
+                        <button onclick="transmit()" class="uk-button uk-button-primary"  type="button">Generate Schedule</button>
                     </p>
                 </div>
             </div>
@@ -265,8 +265,7 @@
             </div>
             </div>
           
-            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-            crossorigin="anonymous"></script>
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
         <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
         <script src="https://uicdn.toast.com/tui.time-picker/v2.0.3/tui-time-picker.min.js"></script>
@@ -305,18 +304,22 @@ $( "#search" ).autocomplete({
     source: availableTags
 });
 </script>
-
 <script>
-    $( function() {
-      $( "#selectable" ).selectable();
-    } );
-    </script>
-    
-    <script>
-        $( function() {
-          $( "#course_list" ).selectable();
-        } );
-        </script>
+var input = document.getElementById("search");
+
+// Execute a function when the user releases a key on the keyboard
+input.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    document.getElementById("search_btn").click();
+  }
+});
+
+</script>
+
 <script>
     $(document).ready(function(){
       $("#myInput").on("keyup", function() {
@@ -327,43 +330,50 @@ $( "#search" ).autocomplete({
       });
     });
     </script>
-    <script>
-    function fillTable(courseName) {
-  document.getElementById("course-list").innerHTML += "<tr><td>"+courseName+"</td><td><input type='checkbox'></td></td></tr>";
-  document.getElementById(courseName).remove();
-}
-</script>
+   
 <script>
     function fillList(courseName) {
         var name = new String(courseName);
         var id = "\"" + courseName +"\""; 
-  document.getElementById("course-list").innerHTML += "<li id="+id+">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input type=\'checkbox\'>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+courseName+"</li>";
+  document.getElementById("course-list").innerHTML += "<li id="+id+">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input name=\"must_have\" type=\'checkbox\'>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+courseName+"</li>";
   document.getElementById(courseName).remove();
 }
 </script>
 
 <script>
     function search(){
-    $(document).ready(function(){
-       
-      $('#selectable').html('');
-      $('#state').val('');
+    $(document).ready(function(){       
+      $('#selectable').html('');     
       var searchField = $('#search').val();
       var expression = new RegExp(searchField, "i");
       $.getJSON('search.json', function(data) {
        $.each(data, function(key, value){
-        if (value.name.search(expression) != -1 || value.location.search(expression) != -1)
+        if (value.name.search(expression) != -1)
         {
             var id = "\"" + value.name +"\"";   
          $('#selectable').append("<li id=" +id+">"+value.name+"</li>");
         }
        });   
-      });
-    
+      });  
 
     });
 }
     </script>
+<script>
+function transmit(){
+var course = [];
+
+$('course-list').children().each(function() {
+  var $this = $(this)
+  var course = { id: $this.attr('id'), must_have: $this.attr('name').value };
+  console.log(course); // display on console
+  course.push(course);
+});
+socket.send(JSON.stringify(course));
+localStorage.setItem('SelectedCourses', JSON.stringify(course));
+}
+</script>
+
     </body>
     
 
