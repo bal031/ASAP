@@ -2,6 +2,9 @@
 # get_database() method to open a connection and the close_database() method
 # to close it once finished.
 #
+# This file uses the mysql-connector-python library.
+# To install for python3 use: `pip3 install mysql-connector-python`
+#
 # NOTE: The following methods should not be vulnerable to SQL injection, but 
 #   they have not been tested. Proceed with caution.  
 
@@ -11,6 +14,10 @@ USER = 'python'
 PASSWORD = 'password'
 DATABASE = 'asap_database'
 HOST = 'localhost'
+
+CAPE_KEYS = ("expected_grade", "received_grade", "hours_per_week", 
+             "recommend_course", "recommend_professor", "response_rate", 
+             "term_code", "name", "subject_code", "course_code")
 
 def get_database():
     '''
@@ -31,6 +38,48 @@ def get_database():
 
 def close_database(database):
     database.close()
+
+def get_capes_by_course(subject_code, course_code, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Returns all capes for the indicated course.
+
+    Parameters:
+    subject_code (String): the subject of the course, (e.g. 'CSE')
+        will be converted to UPPERCASE (e.g. 'cSe' becomes 'CSE')
+    course_code (String): the code for the course, (e.g. '15L')
+        will be converted to UPPERCASE (e.g. '15l' becomes '15L')
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: An array of all capes for the indicated course. Each CAPE 
+             is represented as a dictionary. Use the CAPE_KEYS tuple
+             to access the values you need.
+    '''
+    cursor = database.cursor()
+    course = (get_course_id(subject_code, course_code, database),)
+    sql = "SELECT cape_review.expected_grade, cape_review.received_grade, " \
+        + "cape_review.hours_per_week, cape_review.recommend_course, " \
+        + "cape_review.recommend_professor, cape_review.response_rate, " \
+        + "cape_review.term_code, professor.name, course.subject_code, " \
+        + "course.course_code FROM cape_review LEFT JOIN professor " \
+        + "ON professor.professorID = cape_review.professorID LEFT JOIN course " \
+        + "ON course.courseID=cape_review.courseID WHERE " \
+        + "cape_review.courseID= %s"
+
+    cursor.execute(sql, course)
+    cape_list_raw = cursor.fetchall()
+
+    cursor.close()
+
+    cape_list = []
+    for i in range(len(cape_list_raw)):
+        cape_list.append({})
+        for j in range(len(CAPE_KEYS)):
+            cape_list[i][CAPE_KEYS[j]]=cape_list_raw[i][j]
+
+    return cape_list
 
 def get_course_id(subject_code, course_code, database):
     '''
