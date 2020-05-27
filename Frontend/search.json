@@ -1,4 +1,6 @@
 [
+    {"name":"BIOL 100"},
+    {"name":"BIOL 122"},
     {"name":"CSE 100"},
     {"name":"CSE 101"},
     {"name":"CSE 110"},
@@ -6,9 +8,7 @@
     {"name":"CSE 12"},
     {"name":"CSE 11"},
     {"name":"CSE 140"},
-    {"name":"CSE 141"},
-    {"name":"BIOL 100"},
-    {"name":"BIOL 122"},
+    {"name":"CSE 141"},    
     {"name":"WARR 1"},
     {"name":"ECE 100"},
     {"name":"ECE 101"},
