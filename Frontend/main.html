@@ -386,7 +386,7 @@ $('#course-list').find('li').each(function() {
 });
 console.log(courses); // display on console for debugging only
 localStorage.setItem('SelectedCourses', JSON.stringify(courses));
-
+socket.send(JSON.stringify(courses));
 }
 </script>
 
