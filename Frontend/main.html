@@ -37,6 +37,7 @@
                       selected: function() {
                          var result = $( "#result" ).empty();
                          $( ".ui-selected", this ).each(function() {
+                            event.preventDefault();
                             var myId = $(this).prop('id');
                             document.getElementById("add_class").onclick = function() {fillList(myId)};
                          });
@@ -54,6 +55,7 @@
                      var result = $( "#result" ).empty();
                      $( ".ui-selected", this ).each(function() {
                         var myId = $(this).prop('id');
+                        event.preventDefault();
                         document.getElementById("remove_class").onclick = function() {document.getElementById(myId).remove()};
                         
                      });
@@ -333,9 +335,16 @@ input.addEventListener("keyup", function(event) {
    
 <script>
     function fillList(courseName) {
+        
         var name = new String(courseName);
-        var id = "\"" + courseName +"\""; 
-  document.getElementById("course-list").innerHTML += "<li id="+id+">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input name=\"must_have\" type=\'checkbox\'>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+courseName+"</li>";
+        var id = "\"" + courseName +"\"";
+        var count = document.querySelectorAll("#course-list li").length+1;
+        var name = 'must_have_' + count;
+        var str = "\""+name+"\"";
+        console.log(count); 
+        
+  document.getElementById("course-list").innerHTML += "<li id="+id+">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="+str+" type=\"checkbox\">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+courseName+"</li>";
+  event.preventDefault();
   document.getElementById(courseName).remove();
 }
 </script>
@@ -361,16 +370,23 @@ input.addEventListener("keyup", function(event) {
     </script>
 <script>
 function transmit(){
-var course = [];
+var courses = [];
+var count = 1;
 
-$('course-list').children().each(function() {
-  var $this = $(this)
-  var course = { id: $this.attr('id'), must_have: $this.attr('name').value };
-  console.log(course); // display on console
-  course.push(course);
+$('#course-list').find('li').each(function() {
+  var $this = $(this);
+  // checkbox id   
+  var x = '#must_have_' + count;  
+  
+  var checkState = $(x).is(":checked") ? "true" : "false";
+
+  var course = { name: $this.attr('id'), must_have: checkState};  
+  courses.push(course); 
+  count++;
 });
-socket.send(JSON.stringify(course));
-localStorage.setItem('SelectedCourses', JSON.stringify(course));
+console.log(courses); // display on console for debugging only
+localStorage.setItem('SelectedCourses', JSON.stringify(courses));
+
 }
 </script>
 
