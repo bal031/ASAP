@@ -5,6 +5,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
         <link href="jquery/jquery-ui.css" rel="stylesheet">
         <script src="jquery.js"></script>
         <script src="js/uikit-icons.min.js"></script>
@@ -13,6 +14,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <link rel="stylesheet" href="css/uikit.min.css" />
         <script src="js/uikit.min.js"></script>
+        <script src="script.js"></script>
 
         <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.css">
         <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css">
@@ -341,7 +343,7 @@ input.addEventListener("keyup", function(event) {
         var count = document.querySelectorAll("#course-list li").length+1;
         var name = 'must_have_' + count;
         var str = "\""+name+"\"";
-        console.log(count); 
+       
         
   document.getElementById("course-list").innerHTML += "<li id="+id+">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="+str+" type=\"checkbox\">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+courseName+"</li>";
   event.preventDefault();
@@ -349,46 +351,6 @@ input.addEventListener("keyup", function(event) {
 }
 </script>
 
-<script>
-    function search(){
-    $(document).ready(function(){       
-      $('#selectable').html('');     
-      var searchField = $('#search').val();
-      var expression = new RegExp(searchField, "i");
-      $.getJSON('search.json', function(data) {
-       $.each(data, function(key, value){
-        if (value.name.search(expression) != -1)
-        {
-            var id = "\"" + value.name +"\"";   
-         $('#selectable').append("<li id=" +id+">"+value.name+"</li>");
-        }
-       });   
-      });  
-
-    });
-}
-    </script>
-<script>
-function transmit(){
-var courses = [];
-var count = 1;
-
-$('#course-list').find('li').each(function() {
-  var $this = $(this);
-  // checkbox id   
-  var x = '#must_have_' + count;  
-  
-  var checkState = $(x).is(":checked") ? "true" : "false";
-
-  var course = { name: $this.attr('id'), must_have: checkState};  
-  courses.push(course); 
-  count++;
-});
-console.log(courses); // display on console for debugging only
-localStorage.setItem('SelectedCourses', JSON.stringify(courses));
-socket.send(JSON.stringify(courses));
-}
-</script>
 
     </body>
     
