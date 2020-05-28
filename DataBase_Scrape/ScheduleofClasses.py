@@ -169,16 +169,16 @@ def getAccessToken():
 
 
 
-# if __name__ == "__main__":
-#     print("attempting to make a request...\n\n")
-#     start = time()
-#     # print(json.dumps((getSection(termCode='SP20', subjectCode='CSE',courseCode='110'))))
-#     # print(search(termCode='SP20', subjectCodes="CSE", courseCode="110", limit=1))
-#     # testURL = "https://api.ucsd.edu:8243/get_schedule_of_classes/v1/classes/search?termCode=SP20&subjectCodes=CSE&courseCodes=110&openSection=false"
-#     # response = makeRequest(testURL)
-#     response = search(termCode='SP20', subjectCodes="CSE", openSection="false", offset=50)
-#     print('Elapsed time: ' + str(time() -start))
-#     for section in response:
-#         print(section["courseCode"])
+if __name__ == "__main__":
+    print("attempting to make a request...\n\n")
+    start = time()
+    # print(json.dumps((getSection(termCode='SP20', subjectCode='CSE',courseCode='110'))))
+    # print(search(termCode='SP20', subjectCodes="CSE", courseCode="110", limit=1))
+    # testURL = "https://api.ucsd.edu:8243/get_schedule_of_classes/v1/classes/search?termCode=SP20&subjectCodes=CSE&courseCodes=110&openSection=false"
+    # response = makeRequest(testURL)
+    response = search(termCode='SP20', openSection="false")
+    print('Elapsed time: ' + str(time() -start))
+    for section in response:
+        print(section["courseCode"])
 
 
