@@ -6,16 +6,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
-        <link href="jquery/jquery-ui.css" rel="stylesheet">
-        <script src="jquery.js"></script>
-        <script src="js/uikit-icons.min.js"></script>
-        <link rel="stylesheet" href="css/components/autocomplete.css">
+        <link src="jquery/jquery-ui.css" rel="stylesheet">
         
+        <script src="js/uikit-icons.min.js"></script>
+               
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <link rel="stylesheet" href="css/uikit.min.css" />
         <script src="js/uikit.min.js"></script>
-        <script src="script.js"></script>
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
 
         <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.css">
         <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css">
@@ -32,8 +31,7 @@
             #course-list .ui-selected { background: rgb(104, 104, 104); color: white; }
             
             </style>
-            <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+           
             <script>
                 $(function() {
                    $( "#selectable" ).selectable({
@@ -66,6 +64,7 @@
                });
             });
          </script>
+         <script src="script.js"></script>
         <div class="uk-container-medium uk-container-center uk-margin-top">                
                
             <div class="uk-grid-seperator uk-text-center">
@@ -102,7 +101,7 @@
                             
                        
                         <div id="course-list" class="uk-background-muted uk-scrollable-box">                                                       
-                            <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Must Have  &nbsp&nbsp&nbsp&nbsp &nbsp&nbsp&nbsp&nbsp  Class</div>
+                            <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Must Have  &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp  Class</div>
                                                
                     </div>               
                 
@@ -117,8 +116,8 @@
                     <li class="uk-close">
                         <a class="uk-accordion-title uk-tile-muted" href="#">Add Personal Event</a>
                         <div class="uk-accordion-content">
-                           <form>
-                            <div class="uk-grid" id="pe_days">
+                           <form id="event" autocomplete="off" >
+                            <div class="uk-grid uk-margin-bottom" id="pe_days">
                                 <div class="uk-grid-small uk-child-width-auto">
                                     <label><input class="uk-checkbox" type="checkbox" value="MO"> Monday</label>
                                     <label><input class="uk-checkbox" type="checkbox" value="TU"> Tuesday</label>
@@ -127,34 +126,17 @@
                                     <label><input class="uk-checkbox" type="checkbox" value="FI"> Friday</label>
                                 </div>  
                                 </div>
-                                <div>
-                               
+                                <div>                               
                                     <label>From:</label>
-                                    <br> <input class="uk-input uk-width-1-3 uk-margin-bottom" value="" id="s_time" type="text" placeholder="Some text...">
-                                    <select class="uk-select uk-width-1-5 uk-margin-bottom" id="from_time">
-                                    <option>AM</option>
-                                    <option>PM</option>
-                                </select>                         
-                               
-                                <br>
+                                   <input class="timepicker" id="s_time" value="">                                
+
                                     <label>To: </label>
-                                    <br>
-                                    <input class="uk-input uk-width-1-3" id="e_time" type="text" value="" placeholder="Some text..."> 
-                                    <select class="uk-select uk-width-1-5" id="to_time">
-                                        <option>AM</option>
-                                        <option>PM</option>
-                                    </select>
-                                </form>
-                                  
-                                   
-                               
-                            </div>
-                            <div>
-                                       
-                                <button onclick="transmitPE()" id="pe_btn" class="uk-button uk-button-primary uk-text-right">Add Event</button>
+                                    <input class="timepicker" id="e_time" value="">                          
+
+                                <button onclick="transmitPE()" id="pe_btn" type="reset" class="uk-button uk-button-primary uk-margin-left">Add Event</button>
                             </div>
                                 
-                                              
+                        </form>           
                                 
                             
                           
@@ -314,21 +296,7 @@ $( "#search" ).autocomplete({
     source: availableTags
 });
 </script>
-<script>
-var input = document.getElementById("search");
 
-// Execute a function when the user releases a key on the keyboard
-input.addEventListener("keyup", function(event) {
-  // Number 13 is the "Enter" key on the keyboard
-  if (event.keyCode === 13) {
-    // Cancel the default action, if needed
-    event.preventDefault();
-    // Trigger the button element with a click
-    document.getElementById("search_btn").click();
-  }
-});
-
-</script>
 
 <script>
     $(document).ready(function(){
@@ -339,27 +307,37 @@ input.addEventListener("keyup", function(event) {
         });
       });
     });
+    </script> 
+    <script>
+var input = document.getElementById("search"); //search function
+        // Execute a function when the user releases a key on the keyboard
+input.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    document.getElementById("search_btn").click();
+  }
+});
     </script>
-   
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>   
 <script>
-    function fillList(courseName) {
-        
-        var name = new String(courseName);
-        var id = "\"" + courseName +"\"";
-        var count = document.querySelectorAll("#course-list li").length+1;
-        var name = 'must_have_' + count;
-        var str = "\""+name+"\"";
-       
-        
-  document.getElementById("course-list").innerHTML += "<li id="+id+">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="+str+" type=\"checkbox\">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+courseName+"</li>";
-  event.preventDefault();
-  document.getElementById(courseName).remove();
-}
+$('.timepicker').timepicker({
+    timeFormat: 'HH:mm p',
+    interval: 10,
+    minTime: '5',
+    maxTime: '11:00pm',
+    defaultTime: '9',
+    startTime: '5:00',
+    dynamic: false,
+    dropdown: true,
+    scrollbar: true
+});
+
 </script>
 
 
-
-
     </body>
-        
+    
 </html>
