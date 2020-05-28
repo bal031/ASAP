@@ -10,12 +10,13 @@ from traceback import format_exc
 from time import time
 from Keys import auth_key # used to generate a new access_token 
 from threading import current_thread, Lock
+import json
 
 # constants that will be used repeatedly. DO NOT change. 
 access_token = None
 end_time = 0
 base_url = "https://api.ucsd.edu:8243/get_schedule_of_classes/v1/classes/" # base url for any query 
-lock = Lock() # reentrant lock can be acquired multiple times by the same thread
+lock = Lock() 
 
 def synchronized(func):
     """
@@ -70,7 +71,7 @@ def search(**kwargs):
             # endTime, limit, offset, bldgCodes, roomCodes, printFlag):
     """
     Queries for classes based on query parameter criteria. Only returns high level data that can be used to query for individual classes.
-
+    Note: the arguments must match exactly or else unexpected responses will be returned without throwing an error. 
     Valid Arguments: (all inputs should be strings)
         REQURIED--> termCode: A term code (eg: FA16) <--------------------------------
         subjectCodes: List of subject codes separated by commas no spaces
@@ -93,8 +94,7 @@ def search(**kwargs):
     """
     # raise NotImplementedError
     url = base_url + 'search?' + urlencode(kwargs)
-    print(url)
-    return makeRequest(url)
+    return makeRequest(url)["data"]
 
 
 
@@ -128,7 +128,7 @@ def makeRequest(url : str):
     Arguments:
         url: string of the url
 
-    Returns: 
+    Returns: The requested information in a json format
 
     """
     headers = {
@@ -138,7 +138,7 @@ def makeRequest(url : str):
         response = get(url, headers=headers).json()
     except:
         response = None
-        print('somoething went wrong: \n\n' + format_exc()) # TODO error handling/logging module
+        print('something went wrong: \n\n' + format_exc()) # TODO error handling/logging module
     return response
 
 @synchronized
@@ -159,7 +159,7 @@ def getAccessToken():
     if time() >= end_time or access_token is None: # do we need a new access token?
         try:
             response = post(url=url, data=payload, headers=header)
-            end_time = time() + response.json()['expires_in'] # current time - seconds until token expiration
+            end_time = time() + response.json()['expires_in'] # current time + seconds until token expiration
             access_token = response.json()['access_token']
         except:
             print('something went wrong: \n' + format_exc()) # TODO need a defined error handling module
@@ -169,9 +169,16 @@ def getAccessToken():
 
 
 
-if __name__ == "__main__":
-    print("attempting to make a request...\n\n")
-    print(getSection(termCode='SP20', subjectCode='CSE',courseCode='110'))
-    print(search(termCode='SP20', subjectCodes="CSE"))
+# if __name__ == "__main__":
+#     print("attempting to make a request...\n\n")
+#     start = time()
+#     # print(json.dumps((getSection(termCode='SP20', subjectCode='CSE',courseCode='110'))))
+#     # print(search(termCode='SP20', subjectCodes="CSE", courseCode="110", limit=1))
+#     # testURL = "https://api.ucsd.edu:8243/get_schedule_of_classes/v1/classes/search?termCode=SP20&subjectCodes=CSE&courseCodes=110&openSection=false"
+#     # response = makeRequest(testURL)
+#     response = search(termCode='SP20', subjectCodes="CSE", openSection="false", offset=50)
+#     print('Elapsed time: ' + str(time() -start))
+#     for section in response:
+#         print(section["courseCode"])
 
 
