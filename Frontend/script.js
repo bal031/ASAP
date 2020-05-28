@@ -17,11 +17,9 @@
 }
 
 var socket = io.connect('http://localhost:3000');
-socket.on('connect', function(data) {
-	socket.emit('join', 'generate schedule');
-});
 
-function transmit(){
+
+function transmitCourses(){
     var courses = [];
     var count = 1;
     
@@ -38,5 +36,44 @@ function transmit(){
     });
     console.log(courses); // display on console for debugging only
     //localStorage.setItem('SelectedCourses', JSON.stringify(courses));
-    socket.send(JSON.stringify(courses));
+    
+    socket.on('connect', function(data) {
+      socket.emit('generate schedule', JSON.stringify(courses));
+     
+    });
     }
+
+    function transmitPE(){
+      event.preventDefault();
+      var p_Event = []; // 
+      var count = 1;
+      var days = [];
+      var start = 0;
+      var end = 0;
+
+
+      $('#pe_days').find('input[type=checkbox]:checked').each(function() {
+        days.push($(this).val());
+      });
+
+           
+        var personal_event = { courseName: "my_time", 
+                                sectionID: "-1", 
+                                instructionType:"NA", 
+                                instructionDay: days,
+                                startTime: document.getElementById("s_time").value + document.getElementById("from_time").value, 
+                                endTime:document.getElementById("e_time").value + document.getElementById("to_time").value};  
+       //p_Event.push(personal_event); 
+    
+      
+      console.log(personal_event); // display on console for debugging only
+      //localStorage.setItem('SelectedCourses', JSON.stringify(courses));
+      
+      socket.on('connect', function(data) {
+        socket.emit('add personal event', JSON.stringify(personal_event));
+       
+      });
+      }
+      $("a").click(function(event){
+        event.preventDefault();
+      });
