@@ -1,0 +1,30 @@
+brute force method
+
+generateSchedule( Section personalEvent[], str mustHave[], str wantToHave[]){
+
+    // parse personal Event and Must have.
+    mustHaveFinals
+    if final of mustHaveFinals conflict with personalEvent
+        remove such final from consideration
+
+    if class in mustHave is not is mustHaveFinals
+        remove class from mustHave
+
+    mustHaveLectures
+    if lecture of mustHaveLectures conflict with personalEvent
+        remove such lecture from consideration
+    
+    if class in mustHave is not in mustHaveLectures
+        remove class from mustHave
+    
+    mustHaveDiss
+    if discussion of mustHaveDiss conflict with personalEvent
+        remove such discussion from consideration
+
+    // using personalEvent mustHaveFinals mustHaveLecture mustHaveDiss
+    // generate all possible combinations of schedule
+
+    // for each generated schedule
+    //   score by must have preference
+    // return schedule with the highest value.
+}
