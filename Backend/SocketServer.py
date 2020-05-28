@@ -1,8 +1,6 @@
 from aiohttp import web
 import socketio
 import sys
-sys.path.append('../DataBase_Scrape/soc/')
-import ScheduleofClasses
 
 static_path = None
 # creates a new Async Socket IO Server
@@ -14,14 +12,13 @@ app = web.Application()
 sio.attach(app)
 
 async def index(request):
-    # with open('/var/www/html/test.html') as f:
-    #     return web.Response(text=f.read(), content_type='text/html')
+    """
+    handler for index GET requests
+    """
     print('Index requested')
-    return web.FileResponse(static_path + 'main.html')
+    with open(static_path+'index.html') as f:
+        return web.Response(text=f.read(), content_type='text/html')
 
-# If we wanted to create a new websocket endpoint,
-# use this decorator, passing in the name of the
-# event we wish to listen out for
 @sio.on('message')
 async def print_message(sid, message):
     # When we receive a new event of type
@@ -34,30 +31,26 @@ async def print_message(sid, message):
 async def new_connection(sid, message):
     print("New connection from: " + sid)
 
-@sio.on('search')
-async def search(sid, message):
-    # TODO still working on this 
-    response = ScheduleofClasses.search(termCode='SP20', subjectCodes="CSE", openSection="false", offset=50)
-    for section in response:
-        print(section["courseCode"])
-
-
+@sio.on('generate schedule')
+async def generate_schedule(sid, class_list):
+    sio.emit('processing')
+    # prcess the schedule
+    sio.emit('schedule done', 'replace this with a schedule')
 
 def main():
     """ 
-    prep needed routes then start the server. 
+    prep necessary routes then start the server. 
     """
-    # We bind our aiohttp endpoint to our app
     # router
-    # app.add_routes([web.static('/index.html', static_path)])
     global static_path
-    static_path = '/home/nate/ASAP/Frontend/'
-    route = app.router.add_static('/', static_path, show_index=True)
-    print(route.get_info())
-    # app.router.add_get('/index.html', index)
+    static_path = '/var/www/html/'
+    app.router.add_get('/', index) # redirect to index on initial visit. 
+    app.router.add_static('/', static_path) # automatically add routes for everything else
+   
     # app.add_routes([web.static('/', static_path)]) # this works 
     # We kick off our server
     web.run_app(app, host='asap.ucsd.edu', port=80)
+    print('done')
     # web.run_app(app) # localhost for debugging
 
 if __name__ == '__main__':
