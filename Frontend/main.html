@@ -10,11 +10,12 @@
         <script src="jquery.js"></script>
         <script src="js/uikit-icons.min.js"></script>
         <link rel="stylesheet" href="css/components/autocomplete.css">
-        <script src="js/components/autocomplete.js"></script>
+        
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <link rel="stylesheet" href="css/uikit.min.css" />
         <script src="js/uikit.min.js"></script>
         <script src="script.js"></script>
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
 
         <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.css">
         <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css">
@@ -97,8 +98,7 @@
                         <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Search Result</div>                  
                                          
                    
-                       </div> 
-                       
+                       </div>                       
                             
                        
                         <div id="course-list" class="uk-background-muted uk-scrollable-box">                                                       
@@ -118,40 +118,46 @@
                         <a class="uk-accordion-title uk-tile-muted" href="#">Add Personal Event</a>
                         <div class="uk-accordion-content">
                            <form>
-                            <div class="uk-grid" uk-grid>
+                            <div class="uk-grid" id="pe_days">
                                 <div class="uk-grid-small uk-child-width-auto">
-                                    <label><input class="uk-checkbox" type="checkbox"> Monday</label>
-                                    <label><input class="uk-checkbox" type="checkbox"> Tuesday</label>
-                                    <label><input class="uk-checkbox" type="checkbox"> Thursday</label>
-                                    <label><input class="uk-checkbox" type="checkbox"> Wednesday</label>
-                                    <label><input class="uk-checkbox" type="checkbox"> Thursday</label>
-                                    <label><input class="uk-checkbox" type="checkbox"> Friday</label>
-                                    <label><input class="uk-checkbox" type="checkbox"> Saturday</label>
-                                    <label><input class="uk-checkbox" type="checkbox"> Sunday</label>
+                                    <label><input class="uk-checkbox" type="checkbox" value="MO"> Monday</label>
+                                    <label><input class="uk-checkbox" type="checkbox" value="TU"> Tuesday</label>
+                                    <label><input class="uk-checkbox" type="checkbox" value="WE"> Wednesday</label>
+                                    <label><input class="uk-checkbox" type="checkbox" value="TH"> Thursday</label>
+                                    <label><input class="uk-checkbox" type="checkbox" value="FI"> Friday</label>
+                                </div>  
                                 </div>
-                                <div class="uk-form-controls uk-width-1-4@s">
-                                <label>From:</label> <input class="uk-input" id="form-stacked-text" type="text" placeholder="Some text..."> <select class="uk-select uk-width-1-2@s">
+                                <div>
+                               
+                                    <label>From:</label>
+                                    <br> <input class="uk-input uk-width-1-3 uk-margin-bottom" value="" id="s_time" type="text" placeholder="Some text...">
+                                    <select class="uk-select uk-width-1-5 uk-margin-bottom" id="from_time">
                                     <option>AM</option>
                                     <option>PM</option>
-                                </select>
-                                </div>
+                                </select>                         
                                
-                                <div class="uk-form-controls uk-width-1-4@s">
+                                <br>
                                     <label>To: </label>
-                                    <input class="uk-input" id="form-stacked-text" type="text" placeholder="Some text..."> <select class="uk-select uk-width-1-2@s">
+                                    <br>
+                                    <input class="uk-input uk-width-1-3" id="e_time" type="text" value="" placeholder="Some text..."> 
+                                    <select class="uk-select uk-width-1-5" id="to_time">
                                         <option>AM</option>
                                         <option>PM</option>
                                     </select>
-                                </div>
-                                <div class="uk-form-controls uk-width-1-4@s">
-                                    <p></p>
-                                    <button class="uk-button uk-button-secondary">Add Event</button>
-                                </div>
+                                </form>
+                                  
+                                   
                                
-                            </div>                    
+                            </div>
+                            <div>
+                                       
+                                <button onclick="transmitPE()" id="pe_btn" class="uk-button uk-button-primary uk-text-right">Add Event</button>
+                            </div>
+                                
+                                              
                                 
                             
-                           </form>
+                          
                             
                         </div>
                     </li>
@@ -240,7 +246,7 @@
                     </form>
                     <p class="uk-text-right">
                         <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-                        <button onclick="transmit()" class="uk-button uk-button-primary"  type="button">Generate Schedule</button>
+                        <button onclick="transmitCourses()" class="uk-button uk-button-primary"  type="button">Generate Schedule</button>
                     </p>
                 </div>
             </div>
@@ -352,7 +358,8 @@ input.addEventListener("keyup", function(event) {
 </script>
 
 
-    </body>
-    
 
+
+    </body>
+        
 </html>
