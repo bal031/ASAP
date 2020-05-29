@@ -39,6 +39,140 @@ def get_database():
 def close_database(database):
     database.close()
 
+def get_user_email(user_id, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Returns the email of the user.
+
+    Parameters:
+    user_id (String): the unique id of the user, use get_user_id() for this value
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: the email of the user
+    '''
+    user = (user_id, )
+    cursor = database.cursor()
+    sql = "SELECT email FROM user WHERE userID = %s"
+    cursor.execute(sql, user)
+    id_list = cursor.fetchall()
+    cursor.close()
+
+    return id_list[0][0]
+
+def get_user_create_date(user_id, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Returns the date the user's account was created on.
+
+    Parameters:
+    user_id (String): the unique id of the user, use get_user_id() for this value
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: the date the user's account was created on
+    '''
+    user = (user_id, )
+    cursor = database.cursor()
+    sql = "SELECT create_date FROM user WHERE userID = %s"
+    cursor.execute(sql, user)
+    id_list = cursor.fetchall()
+    cursor.close()
+
+    return id_list[0][0]
+    
+def get_user_id(google_id, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Returns the userID that corresponds to the given google_id. Returns
+    None if the google_id is not in the database
+
+    Parameters:
+    google_id (String): the unique google_id of the user
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: the userID if found, None otherwise
+    '''
+    user = (google_id, )
+    cursor = database.cursor()
+    sql = "SELECT userID FROM user WHERE google_id = %s"
+    cursor.execute(sql, user)
+    id_list = cursor.fetchall()
+    cursor.close()
+
+    if len(id_list) != 1:
+        return None
+
+    return id_list[0][0]
+
+def insert_user(google_id, email, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Inserts the indicated user into the database. Will fail if the 
+    google_id is already regestered.
+
+    Parameters:
+    google_id (String): the unique google_id of the user
+    email (String): the email of the user
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: true if the user is successfully added, false otherwise
+    '''
+    if get_user_id(google_id, database) is not None:
+        return False
+
+    cursor = database.cursor()
+    user = (google_id, email)
+    sql = "INSERT INTO user (google_id, email) VALUES (%s, %s)"
+    cursor.execute(sql, user)
+    database.commit()
+    cursor.close()
+    return True
+
+def get_user_schedule(user_id, name, term_code, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Returns the id of the specified schedule, and inserts the schedule
+    into the database if it is not present
+
+    Parameters:
+    user_id (String): the unique id of the user, use get_user_id() for this value
+    name (String): the name of the schedule
+    term_code (String): The term this schedule is associated with e.g. ("SP20")
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: void
+    '''
+    cursor = database.cursor()
+    user = (user_id, name, term_code.upper())
+
+    sql = "SELECT scheduleID FROM schedule WHERE userID = %s AND name = %s AND term_code = %s"
+    cursor.execute(sql, user)
+    id_list = cursor.fetchall()
+
+    if len(id_list) != 0:
+        cursor.close()
+        return id_list[0][0]
+
+    sql = "INSERT INTO schedule (userID, name, term_code) VALUES (%s, %s, %s)"
+    cursor.execute(sql, user)
+    database.commit()
+
+    sql = "SELECT scheduleID FROM schedule WHERE userID = %s AND name = %s AND term_code = %s"
+    cursor.execute(sql, user)
+    id_list = cursor.fetchall()
+
+    cursor.close()
+    return id_list[0][0]
+
 def get_capes_by_course(subject_code, course_code, database):
     '''
     NOTE: should not be vulnerable to SQL injection, but untested 
@@ -55,7 +189,9 @@ def get_capes_by_course(subject_code, course_code, database):
 
     Returns: An array of all capes for the indicated course. Each CAPE 
              is represented as a dictionary. Use the CAPE_KEYS tuple
-             to access the values you need.
+             to access the values you need. expected_grade and 
+             received_grade have a value of -1 if there was no value for
+             them.
     '''
     cursor = database.cursor()
     course = (get_course_id(subject_code, course_code, database),)
@@ -210,9 +346,9 @@ def insert_cape(subject_code, course_code, name,
         will be converted to UPPERCASE (e.g. '15l' becomes '15L')
     name (String): The name of the professor, case and comma sensitive 
         (e.g. "Gillespie, Gary")
-    expected_grade (Float): From 0.0 to 4.0
+    expected_grade (Float): From 0.0 to 4.0 or -1 if not present
     hours_per_week (Float): Minimum 0.0
-    received_grade (Float): From 0.0 to 4.0
+    received_grade (Float): From 0.0 to 4.0 or -1 if not present
     recommend_course (Float): From 0.0 to 100.0
     recommend_professor (Float): From 0.0 to 100.0
     response_rate (Float): From 0.0 to 100.0. Equal to
