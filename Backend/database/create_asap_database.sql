@@ -24,8 +24,7 @@ CREATE TABLE `schedule` (
 	`scheduleID` INT NOT NULL AUTO_INCREMENT UNIQUE,
 	`userID` INT NOT NULL,
 	`name` varchar(255) NOT NULL,
-	`term_quarter` varchar(2) NOT NULL,
-	`term_year` varchar(4) NOT NULL,
+	`term_code` varchar(8) NOT NULL,
 	PRIMARY KEY (`scheduleID`)
 );
 
