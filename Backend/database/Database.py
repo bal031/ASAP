@@ -19,6 +19,7 @@ CAPE_KEYS = ("expected_grade", "received_grade", "hours_per_week",
              "recommend_course", "recommend_professor", "response_rate", 
              "term_code", "name", "subject_code", "course_code")
 PERSONAL_EVENT_KEYS = ("name", "day_code", "start_time", "end_time")
+TIME_IDX = 2
 
 # ---------- Database io ----------
 
@@ -191,7 +192,7 @@ def delete_personal_event(name, day_code, start_time, end_time, scheduleID, data
     '''
     cursor = database.cursor()
     event = (name, day_code.upper(), start_time, end_time, scheduleID)
-    sql = "DELETE FROM personal_event WHERE name = %s, day_code = %s, start_time = %s, end_time = %s, scheduleID = %s"
+    sql = "DELETE FROM personal_event WHERE name = %s AND day_code = %s AND start_time = %s AND end_time = %s AND scheduleID = %s"
     cursor.execute(sql, event)
     database.commit()
     cursor.close()
@@ -209,7 +210,8 @@ def get_personal_event_by_schedule(scheduleID, database):
     database (mysql database): The connection to the asap_database. Use 
         get_database() to get this value.
 
-    Returns: a list of dictonaries which hold personal events
+    Returns: a list of dictonaries which hold personal events. Note that start/end_time
+        are of type datetime.timedelta. Use str() to get their values
     '''
     cursor = database.cursor()
     event = (scheduleID, )
@@ -222,6 +224,9 @@ def get_personal_event_by_schedule(scheduleID, database):
     for i in range(len(id_list)):
         event_list.append({})
         for j in range(len(PERSONAL_EVENT_KEYS)):
+            if j >= TIME_IDX:
+                event_list[i][PERSONAL_EVENT_KEYS[j]]=id_list[i][j]
+                continue
             event_list[i][PERSONAL_EVENT_KEYS[j]]=id_list[i][j]
 
     return event_list
@@ -250,7 +255,7 @@ def get_class_event_by_schedule(scheduleID, database):
 
     event_list = []
     for i in range(len(id_list)):
-        event_list.append(id_list[i][1])
+        event_list.append(id_list[i][0])
 
     return event_list
 
@@ -279,7 +284,7 @@ def insert_personal_event(name, day_code, start_time, end_time, scheduleID, data
     '''
     cursor = database.cursor()
     event = (name, day_code.upper(), start_time, end_time, scheduleID)
-    sql = "SELECT * FROM personal_event WHERE name = %s, day_code = %s, start_time = %s, end_time = %s, scheduleID = %s"
+    sql = "SELECT * FROM personal_event WHERE name = %s AND day_code = %s AND start_time = %s AND end_time = %s AND scheduleID = %s"
     cursor.execute(sql, event)
     id_list = cursor.fetchall()
 
@@ -311,7 +316,7 @@ def delete_class_event(section_id, scheduleID, database):
     '''
     cursor = database.cursor()
     event = (section_id, scheduleID)
-    sql = "DELETE FROM class_event WHERE section_id = %s, scheduleID = %s"
+    sql = "DELETE FROM class_event WHERE section_id = %s AND scheduleID = %s"
     cursor.execute(sql, event)
     database.commit()
     cursor.close()
@@ -335,7 +340,7 @@ def insert_class_event(section_id, scheduleID, database):
     '''
     cursor = database.cursor()
     event = (section_id, scheduleID)
-    sql = "SELECT * FROM class_event WHERE section_id = %s, scheduleID = %s"
+    sql = "SELECT * FROM class_event WHERE section_id = %s AND scheduleID = %s"
     cursor.execute(sql, event)
     id_list = cursor.fetchall()
 
