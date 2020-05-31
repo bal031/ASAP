@@ -255,24 +255,24 @@ def get_additionalMeetings(section : dict):
         
 
 
-if __name__ == "__main__": # for testing purposes
-    print("attempting to make a request...\n\n")
-    # print(json.dumps((getSection(termCode='SP20', subjectCode='CSE',courseCode='110'))))
-    # print(search(termCode='SP20', subjectCodes="CSE", courseCode="110", limit=1))
-    # testURL = "https://api.ucsd.edu:8243/get_schedule_of_classes/v1/classes/search?termCode=SP20&subjectCodes=CSE&courseCodes=110&openSection=false"
-    # response = makeRequest(testURL)
+# if __name__ == "__main__": # for testing purposes
+#     print("attempting to make a request...\n\n")
+#     # print(json.dumps((getSection(termCode='SP20', subjectCode='CSE',courseCode='110'))))
+#     # print(search(termCode='SP20', subjectCodes="CSE", courseCode="110", limit=1))
+#     # testURL = "https://api.ucsd.edu:8243/get_schedule_of_classes/v1/classes/search?termCode=SP20&subjectCodes=CSE&courseCodes=110&openSection=false"
+#     # response = makeRequest(testURL)
     
-    response = getSectionByID(sectionID="021116")
+#     response = getSectionByID(sectionID="021116")
 
-    course = response['subjectCode'] +  ' ' + response['courseCode']
-    instructors = list()
-    for section in response['sections']:
-        for instructor in section['instructors']:
-            instructors.append(instructor['instructorName'])
+#     course = response['subjectCode'] +  ' ' + response['courseCode']
+#     instructors = list()
+#     for section in response['sections']:
+#         for instructor in section['instructors']:
+#             instructors.append(instructor['instructorName'])
     
-    print('Course: ' + course + '\n\t' + str(instructors))
+#     print('Course: ' + course + '\n\t' + str(instructors))
 
-    user_courses = [{'must_have' : 'true', 'name' : 'ECE 102'}]
-    tmp = get_section_pairings(user_courses)
-    print(tmp)
+#     user_courses = [{'must_have' : 'true', 'name' : 'ECE 102'}]
+#     tmp = get_section_pairings(user_courses)
+#     print(tmp)
     
