@@ -12,6 +12,7 @@ from Keys import auth_key # used to generate a new access_token
 from threading import current_thread, Lock
 import json
 import copy
+from schedule import*
 
 # constants that will be used repeatedly. DO NOT change. 
 access_token = None
@@ -173,7 +174,7 @@ def get_section_pairings(user_courses, termCode='FA20', personalEvents=None):
     Prepares a list of sections for algorithm to use in making its selection. Similar to how its viewd on webreg
     NOTE: I am pairing lectures and discussions with the same prefix together. i.e. LE A00 and DI A01, LE A00 and DI A02, ... etc. 
     Paramters:
-        user_courses : list of dictionaries describing courses selected by the user from the UI. The JSON format is managed by Hung
+        user_courses : list of list of dictionaries describing courses selected by the user from the UI. The JSON format is managed by Hung
             Example:
                 [
                     {
@@ -186,7 +187,7 @@ def get_section_pairings(user_courses, termCode='FA20', personalEvents=None):
     must_haves = []
     could_haves = []
 
-    must_haves += get_personalEvents(personalEvents) # personal events are required events
+    must_haves.append(get_personalEvents(personalEvents)) # personal events are required events
 
     for section in user_courses:
         if section['must_have'] == 'true': # append to must_haves
@@ -196,6 +197,7 @@ def get_section_pairings(user_courses, termCode='FA20', personalEvents=None):
         subjectCode, courseCode = [section['name'].split(' ')[i] for i in (0, 1)]  # get subjectCode and courseCode 
         response = getSection(termCode=termCode, subjectCode=subjectCode, courseCode=courseCode) # query schedule of classes
         
+        classes = []
         curr_le = dict()
         for section in response['sections']:
             if section['instructionType'] == 'LE': # new lecture A00, B00, ..., etc.
@@ -207,8 +209,9 @@ def get_section_pairings(user_courses, termCode='FA20', personalEvents=None):
                     new_pair = copy.deepcopy(curr_le) # get baseline characteristics for the new pairing
                     new_pair['id'] = section['sectionId'] # LE to DI/LA pairings are identified by there DI/LA sectionId
                     new_pair['meetings'] += (get_recurringMeetings(section))
-                    append_list.append(new_pair)
+                    classes.append(new_pair)
                 # else skip this section, capacity is determined by DI/LA and not lecture
+        append_list.append(classes)
     return [must_haves, could_haves]
 
 def get_personalEvents(personalEvents):
@@ -219,8 +222,8 @@ def get_personalEvents(personalEvents):
     if personalEvents is not None:
         for event in personalEvents:
             meetings = list()
-            startTime = event['startTime']
-            endTime = event['endTime']
+            startTime = int(event['startTime'])
+            endTime = int(event['endTime'])
             # eventName = event['courseName']  # Can a user name an event? 
             for day in event['instructionDay']:
                 meetings.append([day, startTime, endTime])
@@ -239,8 +242,8 @@ def get_recurringMeetings(section : dict):
     meetings = list()
     for meeting in section['recurringMeetings']:
         dayCode = meeting['dayCode']
-        startTime = meeting['startTime']
-        endTime = meeting['endTime'] 
+        startTime = int(meeting['startTime'])
+        endTime = int(meeting['endTime'])
         # buildingCode = meeting['buildingCode'] # in case anyone wants this information later
         # roomCode = meetings['roomCode']
         meetings.append([dayCode, startTime, endTime])
@@ -259,8 +262,8 @@ def get_additionalMeetings(section : dict):
     final = None
     for meeting in section['additionalMeetings']:
         dayCode = meeting['dayCode']
-        startTime = meeting['startTime']
-        endTime = meeting['endTime']
+        startTime = int(meeting['startTime'])
+        endTime = int(meeting['endTime'])
         meetingDate = meeting['meetingDate']
         if meeting['meetingType'] == 'MI': # midterm
             midterms.append([dayCode, startTime, endTime, meetingDate]) # might want date for later conflict checking
@@ -274,7 +277,7 @@ def get_additionalMeetings(section : dict):
         
 
 
-# if __name__ == "__main__": # for testing purposes
+if __name__ == "__main__": # for testing purposes
 #     print("attempting to make a request...\n\n")
 #     # print(json.dumps((getSection(termCode='SP20', subjectCode='CSE',courseCode='110'))))
 #     # print(search(termCode='SP20', subjectCodes="CSE", courseCode="110", limit=1))
@@ -291,8 +294,8 @@ def get_additionalMeetings(section : dict):
     
 #     print('Course: ' + course + '\n\t' + str(instructors))
 
-#     user_courses = [{'must_have' : 'true', 'name' : 'ECE 102'}]
-#     personal_events = [{'courseName' : 'my_time', 'startTime': 900, 'endTime': 1000, 'instructionDay' : ['TU', 'TH']}]
-#     must_haves, could_haves = get_section_pairings(user_courses, personalEvents=personal_events)
-#     print(must_haves)
-    
+    user_courses = [{'must_have' : 'true', 'name' : 'ECE 102'}]
+    personal_events = [{'courseName' : 'my_time', 'startTime': 900, 'endTime': 1000, 'instructionDay' : ['TU', 'TH']}]
+    must_haves, could_haves = get_section_pairings(user_courses, personalEvents=personal_events)
+    result = generateSchedule(must_haves, could_haves,[])
+    print(result)
