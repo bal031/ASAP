@@ -17,6 +17,10 @@ HOST = 'localhost'
 CAPE_KEYS = ("expected_grade", "received_grade", "hours_per_week", 
              "recommend_course", "recommend_professor", "response_rate", 
              "term_code", "name", "subject_code", "course_code")
+PERSONAL_EVENT_KEYS = ("name", "day_code", "start_time", "end_time")
+TIME_IDX = 2
+
+# ---------- Database io ----------
 
 def get_database():
     '''
@@ -37,6 +41,8 @@ def get_database():
 
 def close_database(database):
     database.close()
+
+# ---------- User table ----------
 
 def get_user_email(user_id, database):
     '''
@@ -134,7 +140,219 @@ def insert_user(google_id, email, database):
     cursor.close()
     return True
 
-def get_user_schedule(user_id, name, term_code, database):
+# ---------- Schedule Tables ----------
+
+def clear_schedule(scheduleID, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Deletes all personal events and class events that match the scheduleID
+
+    Parameters:
+    scheduleID (String): the unique id of the schedule, use get_schedule_id() 
+        for this value 
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: void
+    '''
+    cursor = database.cursor()
+    event = (scheduleID, )
+    sql = "DELETE FROM personal_event WHERE scheduleID = %s"
+    cursor.execute(sql, event)
+    database.commit()
+    sql = "DELETE FROM class_event WHERE scheduleID = %s"
+    cursor.execute(sql, event)
+    database.commit()
+    cursor.close()
+
+def delete_personal_event(name, day_code, start_time, end_time, scheduleID, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Deletes all personal events from the personal_event table which match the query,
+    this does check for duplicates.
+
+    Parameters:
+    name (String): the name of the event
+    day_code (String): the day the event is on (e.g. 'TU'), converted to UPPERCASE
+    start_time (String): The starting time of the meeting in 24-hour time. String must 
+        be in the format 'HHMMSS' (e.g. '110000' is 11:00:00). Be careful, as '1100' 
+        is interpeted as 00:11:00, or 0 hours and 11 minutes. 
+    end_time (String): The ending time of the meeting in 24-hour time. String must
+        be in the format 'HHMMSS' (e.g. '110000' is 11:00:00). Be careful, as '1100' 
+        is interpeted as 00:11:00, or 0 hours and 11 minutes. 
+    scheduleID (String): the unique id of the schedule, use get_schedule_id() 
+        for this value 
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: void
+    '''
+    cursor = database.cursor()
+    event = (name, day_code.upper(), start_time, end_time, scheduleID)
+    sql = "DELETE FROM personal_event WHERE name = %s AND day_code = %s AND start_time = %s AND end_time = %s AND scheduleID = %s"
+    cursor.execute(sql, event)
+    database.commit()
+    cursor.close()
+
+def get_personal_event_by_schedule(scheduleID, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Returns a list of dictionarys which reperesent personal events. 
+    The dictionary can be accessed with PERSONAL_EVENT_KEYS.
+
+    Parameters:
+    scheduleID (String): the unique id of the schedule, use get_schedule_id() 
+        for this value 
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: a list of dictonaries which hold personal events. Note that start/end_time
+        are of type datetime.timedelta. Use str() to get their values
+    '''
+    cursor = database.cursor()
+    event = (scheduleID, )
+    sql = "SELECT name, day_code, start_time, end_time FROM personal_event WHERE scheduleID = %s"
+    cursor.execute(sql, event)
+    id_list = cursor.fetchall()
+    cursor.close()
+
+    event_list = []
+    for i in range(len(id_list)):
+        event_list.append({})
+        for j in range(len(PERSONAL_EVENT_KEYS)):
+            if j >= TIME_IDX:
+                event_list[i][PERSONAL_EVENT_KEYS[j]]=id_list[i][j]
+                continue
+            event_list[i][PERSONAL_EVENT_KEYS[j]]=id_list[i][j]
+
+    return event_list
+
+def get_class_event_by_schedule(scheduleID, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Returns a list of dictionarys which reperesent course events. 
+    The dictionary can be accessed with PERSONAL_EVENT_KEYS.
+
+    Parameters:
+    scheduleID (String): the unique id of the schedule, use get_schedule_id() 
+        for this value 
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: a list of dictonaries which hold course events
+    '''
+    cursor = database.cursor()
+    event = (scheduleID, )
+    sql = "SELECT section_id FROM class_event WHERE scheduleID = %s"
+    cursor.execute(sql, event)
+    id_list = cursor.fetchall()
+    cursor.close()
+
+    event_list = []
+    for i in range(len(id_list)):
+        event_list.append(id_list[i][0])
+
+    return event_list
+
+def insert_personal_event(name, day_code, start_time, end_time, scheduleID, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Inserts the indicated personal event into tne personal_event table,
+    this does check for duplicates.
+
+    Parameters:
+    name (String): the name of the event
+    day_code (String): the day the event is on (e.g. 'TU'), converted to UPPERCASE
+    start_time (String): The starting time of the meeting in 24-hour time. String must 
+        be in the format 'HHMMSS' (e.g. '110000' is 11:00:00). Be careful, as '1100' 
+        is interpeted as 00:11:00, or 0 hours and 11 minutes. 
+    end_time (String): The ending time of the meeting in 24-hour time. String must
+        be in the format 'HHMMSS' (e.g. '110000' is 11:00:00). Be careful, as '1100' 
+        is interpeted as 00:11:00, or 0 hours and 11 minutes. 
+    scheduleID (String): the unique id of the schedule, use get_schedule_id() 
+        for this value 
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: void
+    '''
+    cursor = database.cursor()
+    event = (name, day_code.upper(), start_time, end_time, scheduleID)
+    sql = "SELECT * FROM personal_event WHERE name = %s AND day_code = %s AND start_time = %s AND end_time = %s AND scheduleID = %s"
+    cursor.execute(sql, event)
+    id_list = cursor.fetchall()
+
+    if len(id_list) > 0:
+        cursor.close()
+        return
+
+    sql = "INSERT INTO personal_event (name, day_code, start_time, end_time, scheduleID) VALUES (%s, %s, %s, %s, %s)"
+    cursor.execute(sql, event)
+    database.commit()
+    cursor.close()
+
+def delete_class_event(section_id, scheduleID, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Inserts the indicated class event into the class_event table,
+    this does check for duplicates.
+
+    Parameters:
+    section_id (Integer): The id of the section in the schedule of classes. 
+        NOT A KEY IN THE ASAP DATABASE
+    scheduleID (String): the unique id of the schedule, use get_schedule_id() 
+        for this value 
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: void
+    '''
+    cursor = database.cursor()
+    event = (section_id, scheduleID)
+    sql = "DELETE FROM class_event WHERE section_id = %s AND scheduleID = %s"
+    cursor.execute(sql, event)
+    database.commit()
+    cursor.close()
+
+def insert_class_event(section_id, scheduleID, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Inserts the indicated class event into the class_event table,
+    this does check for duplicates.
+
+    Parameters:
+    section_id (Integer): The id of the section in the schedule of classes. 
+        NOT A KEY IN THE ASAP DATABASE
+    scheduleID (String): the unique id of the schedule, use get_schedule_id() 
+        for this value 
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: void
+    '''
+    cursor = database.cursor()
+    event = (section_id, scheduleID)
+    sql = "SELECT * FROM class_event WHERE section_id = %s AND scheduleID = %s"
+    cursor.execute(sql, event)
+    id_list = cursor.fetchall()
+
+    if len(id_list) > 0:
+        cursor.close()
+        return
+
+    sql = "INSERT INTO class_event (section_id, scheduleID) VALUES (%s, %s)"
+    cursor.execute(sql, event)
+    database.commit()
+    cursor.close()
+
+def get_schedule_id(user_id, name, term_code, database):
     '''
     NOTE: should not be vulnerable to SQL injection, but untested 
 
@@ -148,7 +366,7 @@ def get_user_schedule(user_id, name, term_code, database):
     database (mysql database): The connection to the asap_database. Use 
         get_database() to get this value.
 
-    Returns: void
+    Returns: the ID of the user's schedule   
     '''
     cursor = database.cursor()
     user = (user_id, name, term_code.upper())
@@ -172,162 +390,7 @@ def get_user_schedule(user_id, name, term_code, database):
     cursor.close()
     return id_list[0][0]
 
-def get_capes_by_course(subject_code, course_code, database):
-    '''
-    NOTE: should not be vulnerable to SQL injection, but untested 
-
-    Returns all capes for the indicated course.
-
-    Parameters:
-    subject_code (String): the subject of the course, (e.g. 'CSE')
-        will be converted to UPPERCASE (e.g. 'cSe' becomes 'CSE')
-    course_code (String): the code for the course, (e.g. '15L')
-        will be converted to UPPERCASE (e.g. '15l' becomes '15L')
-    database (mysql database): The connection to the asap_database. Use 
-        get_database() to get this value.
-
-    Returns: An array of all capes for the indicated course. Each CAPE 
-             is represented as a dictionary. Use the CAPE_KEYS tuple
-             to access the values you need. expected_grade and 
-             received_grade have a value of -1 if there was no value for
-             them.
-    '''
-    cursor = database.cursor()
-    course = (get_course_id(subject_code, course_code, database),)
-    sql = "SELECT cape_review.expected_grade, cape_review.received_grade, " \
-        + "cape_review.hours_per_week, cape_review.recommend_course, " \
-        + "cape_review.recommend_professor, cape_review.response_rate, " \
-        + "cape_review.term_code, professor.name, course.subject_code, " \
-        + "course.course_code FROM cape_review LEFT JOIN professor " \
-        + "ON professor.professorID = cape_review.professorID LEFT JOIN course " \
-        + "ON course.courseID=cape_review.courseID WHERE " \
-        + "cape_review.courseID= %s"
-
-    cursor.execute(sql, course)
-    cape_list_raw = cursor.fetchall()
-
-    cursor.close()
-
-    cape_list = []
-    for i in range(len(cape_list_raw)):
-        cape_list.append({})
-        for j in range(len(CAPE_KEYS)):
-            cape_list[i][CAPE_KEYS[j]]=cape_list_raw[i][j]
-
-    return cape_list
-
-def get_course_id(subject_code, course_code, database):
-    '''
-    NOTE: should not be vulnerable to SQL injection, but untested 
-
-    Returns the unique id of the course. Will add the course to the database
-    if the course does not exist.
-
-    Parameters:
-    subject_code (String): the subject of the course, (e.g. 'CSE')
-        will be converted to UPPERCASE (e.g. 'cSe' becomes 'CSE')
-    course_code (String): the code for the course, (e.g. '15L')
-        will be converted to UPPERCASE (e.g. '15l' becomes '15L')
-    database (mysql database): The connection to the asap_database. Use 
-        get_database() to get this value.
-
-    Returns: the unique id of the class
-    '''
-    course = (subject_code.upper(), course_code.upper())
-    cursor = database.cursor()
-    sql = "SELECT courseID FROM course WHERE subject_code = %s AND course_code = %s"
-    cursor.execute(sql, course)
-    id_list = cursor.fetchall()
-
-    if len(id_list) != 0:
-        cursor.close()
-        return id_list[0][0]
-
-    sql = "INSERT INTO course (subject_code, course_code) VALUES (%s, %s)"
-    cursor.execute(sql, course)
-    database.commit()
-
-    sql = "SELECT courseID FROM course WHERE subject_code = %s AND course_code = %s"
-    cursor.execute(sql, course)
-    id_list = cursor.fetchall()
-
-    cursor.close()
-    return id_list[0][0]
-
-def get_room_id(building_code, room_code, database):
-    '''
-    NOTE: should not be vulnerable to SQL injection, but untested 
-
-    Returns the unique id of the room. Will add the room to the database
-    if the room does not exist.
-
-    Parameters:
-    building_code (String): the building where the room is located, (e.g. 'WLH')
-        will be converted to UPPERCASE (e.g. 'Wlh' becomes 'WLH')
-    room_code (String): the room, (e.g. '201A')
-        will be converted to UPPERCASE (e.g. '201a' becomes '201A')
-    database (mysql database): The connection to the asap_database. Use 
-        get_database() to get this value.
-
-    Returns: the unique id of the class
-    '''
-    room = (building_code.upper(), room_code.upper())
-    cursor = database.cursor()
-    sql = "SELECT roomID FROM room WHERE building_code = %s AND room_code = %s"
-    cursor.execute(sql, room)
-    id_list = cursor.fetchall()
-
-    if len(id_list) != 0:
-        cursor.close()
-        return id_list[0][0]
-
-    sql = "INSERT INTO room (building_code, room_code) VALUES (%s, %s)"
-    cursor.execute(sql, room)
-    database.commit()
-
-    sql = "SELECT roomID FROM room WHERE building_code = %s AND room_code = %s"
-    cursor.execute(sql, room)
-    id_list = cursor.fetchall()
-
-    cursor.close()
-    return id_list[0][0]
-
-def get_professor_id(name, database):
-    '''
-    NOTE: should not be vulnerable to SQL injection, but untested 
-
-    Returns the unique id of the professor. Will add the course to the database
-    if the course does not exist.
-
-    Parameters:
-    name (String): The name of the professor, case and comma sensitive 
-        (e.g. "Gillespie, Gary")
-    database (mysql database): The connection to the asap_database. Use 
-        get_database() to get this value.
-
-    Returns: the unique id of the professor
-    '''
-    professor = (name, )
-
-    cursor = database.cursor()
-    sql = "SELECT professorID FROM professor WHERE name = %s"
-    cursor.execute(sql, professor)
-    id_list = cursor.fetchall()
-
-    if len(id_list) != 0:
-        cursor.close()
-        return id_list[0][0]
-
-    sql = "INSERT INTO professor (name) VALUES (%s)"
-    cursor.execute(sql, professor)
-    database.commit()
-
-    sql = "SELECT professorID FROM professor WHERE name = %s"
-    cursor.execute(sql, professor)
-    id_list = cursor.fetchall()
-
-    cursor.close()
-    return id_list[0][0]
+# ---------- Capes ----------
 
 def insert_cape(subject_code, course_code, name, 
         expected_grade, received_grade, hours_per_week, recommend_course, 
@@ -374,13 +437,11 @@ def insert_cape(subject_code, course_code, name,
     database.commit()
     cursor.close()
 
-def get_section_id(subject_code, course_code, name, 
-        instruction_type, section_code, term_code, database):
+def get_capes_by_course_and_prof(subject_code, course_code, name, database):
     '''
     NOTE: should not be vulnerable to SQL injection, but untested 
 
-    Gets the id of the specified section, and inserts it into the database
-    if it doesn't exist
+    Returns all capes for the indicated course and professor.
 
     Parameters:
     subject_code (String): the subject of the course, (e.g. 'CSE')
@@ -389,124 +450,112 @@ def get_section_id(subject_code, course_code, name,
         will be converted to UPPERCASE (e.g. '15l' becomes '15L')
     name (String): The name of the professor, case and comma sensitive 
         (e.g. "Gillespie, Gary")
-    instruction_type (String): what type of instruction is this (e.g. 'LE', 'DI')
-    section_code (String): code for the section (e.g. 'A01')
-    term_code (String): e.g. ("SP20")
     database (mysql database): The connection to the asap_database. Use 
         get_database() to get this value.
 
-    Returns: the id of the specified section
+    Returns: An array of all capes for the indicated course. Each CAPE 
+             is represented as a dictionary. Use the CAPE_KEYS tuple
+             to access the values you need. expected_grade and 
+             received_grade have a value of -1 if there was no value for
+             them.
     '''
-    courseID = get_course_id(subject_code, course_code, database)
-    professorID = get_professor_id(name, database)
-
-    section = (instruction_type, section_code.upper(), term_code.upper(), courseID, professorID)
-
     cursor = database.cursor()
-    sql = "SELECT sectionID FROM current_class_section WHERE instruction_type = %s AND " \
-        + "section_code = %s AND term_code = %s AND courseID = %s AND professorID = %s"
-    cursor.execute(sql, section)
+    course = (get_course_id(subject_code, course_code, database), get_professor_id(name, database))
+    sql = "SELECT cape_review.expected_grade, cape_review.received_grade, " \
+        + "cape_review.hours_per_week, cape_review.recommend_course, " \
+        + "cape_review.recommend_professor, cape_review.response_rate, " \
+        + "cape_review.term_code, professor.name, course.subject_code, " \
+        + "course.course_code FROM cape_review LEFT JOIN professor " \
+        + "ON professor.professorID = cape_review.professorID LEFT JOIN course " \
+        + "ON course.courseID=cape_review.courseID WHERE " \
+        + "cape_review.courseID = %s AND cape_review.professorID = %s "
+
+    cursor.execute(sql, course)
+    cape_list_raw = cursor.fetchall()
+
+    cursor.close()
+
+    cape_list = []
+    for i in range(len(cape_list_raw)):
+        cape_list.append({})
+        for j in range(len(CAPE_KEYS)):
+            cape_list[i][CAPE_KEYS[j]]=cape_list_raw[i][j]
+
+    return cape_list
+
+# ---------- Course and Professor ----------
+
+def get_course_id(subject_code, course_code, database):
+    '''
+    NOTE: should not be vulnerable to SQL injection, but untested 
+
+    Returns the unique id of the course. Will add the course to the database
+    if the course does not exist.
+
+    Parameters:
+    subject_code (String): the subject of the course, (e.g. 'CSE')
+        will be converted to UPPERCASE (e.g. 'cSe' becomes 'CSE')
+    course_code (String): the code for the course, (e.g. '15L')
+        will be converted to UPPERCASE (e.g. '15l' becomes '15L')
+    database (mysql database): The connection to the asap_database. Use 
+        get_database() to get this value.
+
+    Returns: the unique id of the class
+    '''
+    course = (subject_code.upper(), course_code.upper())
+    cursor = database.cursor()
+    sql = "SELECT courseID FROM course WHERE subject_code = %s AND course_code = %s"
+    cursor.execute(sql, course)
     id_list = cursor.fetchall()
 
     if len(id_list) != 0:
         cursor.close()
         return id_list[0][0]
 
-    sql = "INSERT INTO current_class_section (instruction_type, section_code, " \
-        + "term_code, courseID, professorID) VALUES (%s, %s, %s, %s, %s)"
-    cursor.execute(sql, section)
+    sql = "INSERT INTO course (subject_code, course_code) VALUES (%s, %s)"
+    cursor.execute(sql, course)
     database.commit()
 
-    sql = "SELECT sectionID FROM current_class_section WHERE instruction_type = %s AND " \
-        + "section_code = %s AND term_code = %s AND courseID = %s AND professorID = %s"
-    cursor.execute(sql, section)
+    sql = "SELECT courseID FROM course WHERE subject_code = %s AND course_code = %s"
+    cursor.execute(sql, course)
     id_list = cursor.fetchall()
 
     cursor.close()
     return id_list[0][0]
-    
-def insert_recurring_meeting( day_code, start_time, end_time, roomID, sectionID, database):
+
+def get_professor_id(name, database):
     '''
     NOTE: should not be vulnerable to SQL injection, but untested 
 
-    Inserts the specified meeting into the database if not already present. Used
-    for meetings that happen on a weekly basis, like lectures.
+    Returns the unique id of the professor. Will add the course to the database
+    if the course does not exist.
 
     Parameters:
-    day_code (String): The day the meeting is on (e.g. 'TU')
-    start_time (String): The starting time of the meeting in 24-hour time. String must 
-        be in the format 'HHMMSS' (e.g. '110000' is 11:00:00). Be careful, as '1100' 
-        is interpeted as 00:11:00, or 0 hours and 11 minutes. 
-    end_time (String): The ending time of the meeting in 24-hour time. String must
-        be in the format 'HHMMSS' (e.g. '110000' is 11:00:00). Be careful, as '1100' 
-        is interpeted as 00:11:00, or 0 hours and 11 minutes. 
-    roomID (Integer): the id of a room in the database. Use get_room_id() for this. Use 
-        None if there is no room for the meeting.
-    sectionID (Integer): the id of a section in the database. Use get_section_id() for this. 
+    name (String): The name of the professor, case and comma sensitive 
+        (e.g. "Gillespie, Gary")
     database (mysql database): The connection to the asap_database. Use 
         get_database() to get this value.
 
-    Returns: void
+    Returns: the unique id of the professor
     '''
-    meeting = (day_code.upper(), start_time, end_time, roomID, sectionID)
+    professor = (name, )
 
     cursor = database.cursor()
-    sql = "SELECT * FROM current_section_meeting WHERE day_code = %s AND " \
-        + "start_time = %s AND end_time = %s AND roomID = %s AND sectionID = %s"
-    cursor.execute(sql, meeting)
-    meeting_list = cursor.fetchall()
+    sql = "SELECT professorID FROM professor WHERE name = %s"
+    cursor.execute(sql, professor)
+    id_list = cursor.fetchall()
 
-    if len(meeting_list) != 0:
+    if len(id_list) != 0:
         cursor.close()
-        return
+        return id_list[0][0]
 
-    sql = "INSERT INTO current_section_meeting (day_code, start_time, " \
-        + "end_time, roomID, sectionID) VALUES (%s, %s, %s, %s, %s)"
-    cursor.execute(sql, meeting)
+    sql = "INSERT INTO professor (name) VALUES (%s)"
+    cursor.execute(sql, professor)
     database.commit()
+
+    sql = "SELECT professorID FROM professor WHERE name = %s"
+    cursor.execute(sql, professor)
+    id_list = cursor.fetchall()
+
     cursor.close()
-
-
-def insert_one_time_meeting( meeting_type, meeting_date, start_time, end_time, roomID, sectionID, database):
-    '''
-    NOTE: should not be vulnerable to SQL injection, but untested 
-
-    Inserts the specified meeting into the database if not already present. Used
-    for meetings that happen only once, like midterms or finals.
-
-    Parameters:
-    meeting_type (String): The type of meeting this is (e.g. 'FI' for final)
-    meeting_date (String): The date of the meeting in the format 'YYYY-MM-DD' 
-        (e.g. '2020-05-19' is May 19th, 2020)
-    start_time (String): The starting time of the meeting in 24-hour time. String must 
-        be in the format 'HH:MM:SS' (e.g. '11:00:00' is 11:00:00). Be careful, as '11:00' 
-        is interpeted as 00:11:00, or 0 hours and 11 minutes. 
-    end_time (String): The ending time of the meeting in 24-hour time. String must
-        be in the format 'HH:MM:SS' (e.g. '11:00:00' is 11:00:00). Be careful, as '11:00' 
-        is interpeted as 00:11:00, or 0 hours and 11 minutes. 
-    roomID (Integer): the id of a room in the database. Use get_room_id() for this. Use 
-        None if there is no room for the meeting.
-    sectionID (Integer): the id of a section in the database. Use get_section_id() for this. 
-    database (mysql database): The connection to the asap_database. Use 
-        get_database() to get this value.
-
-    Returns: void
-    '''
-    meeting = (meeting_type.upper(), meeting_date, start_time, end_time, roomID, sectionID)
-
-    cursor = database.cursor()
-    sql = "SELECT * FROM current_additional_meeting WHERE meeting_type = %s AND " \
-        + "meeting_date = %s AND start_time = %s AND end_time = %s AND roomID = %s" \
-        + " AND sectionID = %s"
-    cursor.execute(sql, meeting)
-    meeting_list = cursor.fetchall()
-
-    if len(meeting_list) != 0:
-        cursor.close()
-        return
-
-    sql = "INSERT INTO current_additional_meeting (meeting_type, meeting_date, start_time, " \
-        + "end_time, roomID, sectionID) VALUES (%s, %s, %s, %s, %s, %s)"
-    cursor.execute(sql, meeting)
-    database.commit()
-    cursor.close()
+    return id_list[0][0]
