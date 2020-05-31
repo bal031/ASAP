@@ -18,11 +18,27 @@
 
         <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.css">
         <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css">
-        <link rel="stylesheet" type="text/css" href="dist/tui-calendar.css">
+       
         <link rel="stylesheet" type="text/css" href="css/default.css">
         <link rel="stylesheet" type="text/css" href="css/icons.css">
 		<link rel="stylesheet" type="text/css" href="css/components/autocomplete.css">
-		<script src="js/components/autocomplete.min.js"></script>
+        <script src="js/components/autocomplete.min.js"></script>
+        
+        <link href='packages/core/main.css' rel='stylesheet' />
+        <link href='packages/list/main.css' rel='stylesheet' />
+    
+        <script src='packages/core/main.js'></script>
+        <script src='packages/list/main.js'></script>
+
+        <link href='packages/core/main.css' rel='stylesheet' />
+<link href='packages/daygrid/main.css' rel='stylesheet' />
+<link href='packages/timegrid/main.css' rel='stylesheet' />
+<link href='packages/list/main.css' rel='stylesheet' />
+<script src='packages/core/main.js'></script>
+<script src='packages/interaction/main.js'></script>
+<script src='packages/daygrid/main.js'></script>
+<script src='packages/timegrid/main.js'></script>
+<script src='packages/list/main.js'></script>
         <style>
             
             #selectable .ui-selecting { background: rgb(160, 160, 160); }
@@ -85,7 +101,12 @@
             </div>
             <div class="uk-container uk-container-center uk-container-small uk-margin-bottom">
                
-                    <div class="uk-flex uk-flex-center">
+                    <div class="uk-flex uk-flex-center"><label class="uk-text-middle uk-text-large">Term:</label><select class="uk-select uk-width-auto  uk-margin-small-right" id="cur_term">
+                        <option value="FA20">FALL 2020</option>
+                        <option value="S120">SUMMER S1</option>
+                        <option value="S220">SUMMER S2</option>
+                        <option value="SP20">SPRING 2020</option>
+                    </select>
 					<div class="uk-autocomplete uk-form uk-width-1-2" data-uk-autocomplete="{source:'search.json'}">
                         <input class="uk-input uk-text-left uk-width" type="text" id="search" placeholder="Class Search">
                         </div>
@@ -109,8 +130,7 @@
                 
                 </div>  
                    
-                    </div>
-                
+                    </div>               
                          
                    
                 </div>
@@ -230,57 +250,67 @@
                     </form>
                     <p class="uk-text-right">
                         <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-                        <button onclick="transmit()" class="uk-button uk-button-primary"  type="button">Generate Schedule</button>
+                        <button onclick="transmit()" class="uk-button uk-button-primary uk-modal-close"  type="button">Generate Schedule</button>
                     </p>
                 </div>
             </div>
             <div class="uk-container uk-container-medium uk-container-center uk-background-muted">
-                <div id="menu">
-                    <span id="menu-navi">
-                      <button type="button" class="btn btn-default btn-sm move-today" data-action="move-today">Today</button>
-                      <button type="button" class="btn btn-default btn-sm move-day" data-action="move-prev">
-                        <i class="calendar-icon ic-arrow-line-left" data-action="move-prev"></i>
-                      </button>
-                      <button type="button" class="btn btn-default btn-sm move-day" data-action="move-next">
-                        <i class="calendar-icon ic-arrow-line-right" data-action="move-next"></i>
-                      </button>
-                    </span>
-                    <span id="renderRange" class="render-range"></span>
-                  </div>
-                               
+                   
                 <div id="calendar"></div>
                 
             <div uk-lightbox>   
-                <p class="uk-text-right">
-                              
+                <p class="uk-text-right">                              
                     <a class="uk-button uk-button-primary" href="view_schedule.html" type="button">View Schedule</a>
                    
                 </p>
             </div>
-            </div>
-          
-            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-        <script src="https://uicdn.toast.com/tui.code-snippet/v1.5.2/tui-code-snippet.min.js"></script>
-        <script src="https://uicdn.toast.com/tui.time-picker/v2.0.3/tui-time-picker.min.js"></script>
-        <script src="https://uicdn.toast.com/tui.date-picker/v4.0.3/tui-date-picker.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/chance/1.0.13/chance.min.js"></script>
-        <script src="dist/tui-calendar.js"></script>
-        <script src="js/data/calendars.js"></script>
-        <script src="js/data/schedules.js"></script>
-           
-         
-        </div>
+            </div>         
+ 
 
+        <div id="wait" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                <button class="uk-modal-close-default" type="button" uk-close></button>
+                <h2 class="uk-modal-title">Thank You For Wait</h2>
+                <span class="uk-margin-small-right" uk-spinner="ratio: 3"></span>
+                <span uk-spinner="ratio: 4.5"></span>
+         </div>
         </div>
 
         
-            <script src="js/app-custom.js"></script>
+           
         <script src="jquery.js"></script>
 <script src="jquery/jquery-ui.js"></script>
 
+  <script>
+      /*
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
 
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
+          header:{right: 'dayGridMonth,timeGridWeek'},
+          events: [
+        {
+          title: 'CSE 110',
+          startTime: '9:00:00',
+          endTime: '9:50:00',
+          daysOfWeek: [1,3,5]
+        },
+        {
+          title: 'Personal Event',
+          startTime: '11:00:00',
+          endTime: '13:00:00',
+          daysOfWeek: [1,3,5]
+        }
+      ]
+    });   
+
+     
+
+        calendar.render();
+      });
+    */
+    </script>
 
 <script>
     $(document).ready(function(){
@@ -313,14 +343,13 @@ $('.timepicker').timepicker({
     minTime: '7',
     maxTime: '11:00pm',
     defaultTime: '7',
-    startTime: '7:00',
+    startTime: '5:00',
     dynamic: false,
     dropdown: true,
     scrollbar: true
 });
 
 </script>
-
 
 
     </body>
