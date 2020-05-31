@@ -1,0 +1,52 @@
+generateSchedule( personalEvent[], mustHave[], wantToHave[], dictionary ) {
+	Section[][] Mschedule = array[12][] // from 8am to 8pm I don't think any class happens after 8pm section
+	...Wschedule
+	...Fschedule
+	Section[][] Tuschedule = array[8][]  // same
+	...Thschedule
+	
+	// each slot in the schedule is either populated or NULL
+
+	// fill in personalEvents O(5n) where n is number of personal events
+	for each i in personalEvent:
+		if(i.Lecture_Day.has(M)):
+		Mschedule[i.getTime().convertToHour()].fillInPersonalEvent() // or some placeholder indicating that it is personal
+		// if loops for Tuesday to Friday
+
+	// parse mustHave
+
+	the algorithm is as follows:
+
+	//bruteforce on lectures because lecture has some associated discussions on the schedule
+
+	int musthaveCounts[4]
+
+	if( mustHave[].size >= 4 ): just not possible
+	if( mustHave[].size == 4 ):
+		for each section i of mustHave[0]:
+						getLectureTime of i, j, k, l get DiscussionTine of i j k l
+						pair a lecture with its own discussion and call them a combined section
+						the combined section has one more property: boolean isUnique
+						isUnique = true if both lecture and discussion has only one section
+						time for combined section is just or of the lecture and discussion
+						try: fill in the 5 schedules with combined sections
+						if already has a unique class in the slot or a personal event, 
+						    then abandon the combined section
+						else: push it into the list of time slot of the schedule of the day
+							musthaveCount[i]++
+		same for mustHave[1],[2],[3]
+	// same logic for size == 3/2/1
+	
+	Reduce time to O(n) and space to O(n^2)
+
+	logic for want to have:
+		// greedy algorithm
+		number of classes for want to have = 4-mustHave.size
+		sort want to have in priority queue
+		for each section of want to have
+			try to fit it into the schedule
+				if it encounters a unique, then no
+				if it encounters a not unique, and mustHaveCount[thatClass] >1, then mustHaveCount[thatClass]-1 and put want have into the schedule
+``````````````````````````````````````````````
+roughly that is the logic, the biggest time consuming is just the prirority sorting
+}		

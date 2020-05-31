@@ -24,20 +24,20 @@ CREATE TABLE `schedule` (
 	`scheduleID` INT NOT NULL AUTO_INCREMENT UNIQUE,
 	`userID` INT NOT NULL,
 	`name` varchar(255) NOT NULL,
-	`term_quarter` varchar(2) NOT NULL,
-	`term_year` varchar(4) NOT NULL,
+	`term_code` varchar(8) NOT NULL,
 	PRIMARY KEY (`scheduleID`)
 );
 
-CREATE TABLE `class_schedule_event` (
-	`scheduleID` INT NOT NULL,
-	`sectionID` INT NOT NULL
+CREATE TABLE `class_event` (
+	`section_id` INT(16) NOT NULL,
+	`scheduleID` INT NOT NULL
 );
 
 CREATE TABLE `personal_event` (
-	`end` DATETIME NOT NULL,
 	`name` varchar(255) NOT NULL,
-	`start` DATETIME NOT NULL,
+	`day_code` varchar(4) NOT NULL,
+	`start_time` TIME NOT NULL,
+	`end_time` TIME NOT NULL,
 	`scheduleID` INT NOT NULL
 );
 
@@ -46,33 +46,6 @@ CREATE TABLE `course` (
 	`course_code` varchar(16) NOT NULL,
 	`subject_code` varchar(16) NOT NULL,
 	PRIMARY KEY (`courseID`)
-);
-
-CREATE TABLE `current_class_section` (
-	`sectionID` INT NOT NULL AUTO_INCREMENT UNIQUE,
-	`instruction_type` varchar(8) NOT NULL,
-	`section_code` varchar(32) NOT NULL,
-	`term_code` varchar(8) NOT NULL,
-	`professorID` INT NOT NULL,
-	`courseID` INT NOT NULL,
-	PRIMARY KEY (`sectionID`)
-);
-
-CREATE TABLE `current_section_meeting` (
-	`day_code` varchar(4) NOT NULL,
-	`end_time` TIME NOT NULL,
-	`start_time` TIME NOT NULL,
-	`roomID` INT,
-	`sectionID` INT NOT NULL
-);
-
-CREATE TABLE `current_additional_meeting` (
-	`meeting_date` DATE NOT NULL,
-	`meeting_type` varchar(16) NOT NULL,
-	`start_time` TIME NOT NULL,
-	`end_time` TIME NOT NULL,
-	`roomID` INT,
-	`sectionID` INT NOT NULL
 );
 
 CREATE TABLE `professor` (
@@ -93,32 +66,11 @@ CREATE TABLE `cape_review` (
 	`term_code` varchar(8) NOT NULL
 );
 
-CREATE TABLE `room` (
-	`roomID` INT NOT NULL AUTO_INCREMENT UNIQUE,
-	`room_code` varchar(32) NOT NULL DEFAULT 'TBA',
-	`building_code` varchar(32) NOT NULL DEFAULT 'TBA',
-	PRIMARY KEY (`roomID`)
-);
-
 ALTER TABLE `schedule` ADD CONSTRAINT `schedule_fk0` FOREIGN KEY (`userID`) REFERENCES `user`(`userID`);
 
-ALTER TABLE `class_schedule_event` ADD CONSTRAINT `class_schedule_event_fk0` FOREIGN KEY (`scheduleID`) REFERENCES `schedule`(`scheduleID`);
-
-ALTER TABLE `class_schedule_event` ADD CONSTRAINT `class_schedule_event_fk1` FOREIGN KEY (`sectionID`) REFERENCES `current_class_section`(`sectionID`);
+ALTER TABLE `class_event` ADD CONSTRAINT `class_event_fk0` FOREIGN KEY (`scheduleID`) REFERENCES `schedule`(`scheduleID`);
 
 ALTER TABLE `personal_event` ADD CONSTRAINT `personal_event_fk0` FOREIGN KEY (`scheduleID`) REFERENCES `schedule`(`scheduleID`);
-
-ALTER TABLE `current_class_section` ADD CONSTRAINT `current_class_section_fk0` FOREIGN KEY (`professorID`) REFERENCES `professor`(`professorID`);
-
-ALTER TABLE `current_class_section` ADD CONSTRAINT `current_class_section_fk1` FOREIGN KEY (`courseID`) REFERENCES `course`(`courseID`);
-
-ALTER TABLE `current_section_meeting` ADD CONSTRAINT `current_section_meeting_fk0` FOREIGN KEY (`roomID`) REFERENCES `room`(`roomID`);
-
-ALTER TABLE `current_section_meeting` ADD CONSTRAINT `current_section_meeting_fk1` FOREIGN KEY (`sectionID`) REFERENCES `current_class_section`(`sectionID`);
-
-ALTER TABLE `current_additional_meeting` ADD CONSTRAINT `current_additional_meeting_fk0` FOREIGN KEY (`roomID`) REFERENCES `room`(`roomID`);
-
-ALTER TABLE `current_additional_meeting` ADD CONSTRAINT `current_additional_meeting_fk1` FOREIGN KEY (`sectionID`) REFERENCES `current_class_section`(`sectionID`);
 
 ALTER TABLE `cape_review` ADD CONSTRAINT `cape_review_fk0` FOREIGN KEY (`courseID`) REFERENCES `course`(`courseID`);
 

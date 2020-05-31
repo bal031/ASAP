@@ -24,7 +24,29 @@
     });
 }
 
-function transmitCourses(){
+function transmit(){
+  getCourses();
+  getReference();
+  
+
+  var data = {course: courses, personalEvent:p_Event, reference: p_Reference};
+  
+  console.log(data);
+  //socket.on('connect', function(data) {
+      //  socket.emit('generate schedule', JSON.stringify(data)); 
+
+}
+
+function getReference(){
+    
+    var ref = {transportation: $("#trans").val(), prof_Rating: $("#prof_rating").val(), 
+    avg_GPA: $("#avg_gpa").val(), avg_Time: $("#avg_time").val(), gap: $("#gap").val(),
+    class_Days: $("#class_days").val(), time_Ref: $("#time_pref").val()}
+ 
+  p_Reference.push(ref);
+}
+
+function getCourses(){
     
     var count = 1;
     
@@ -39,6 +61,7 @@ function transmitCourses(){
       courses.push(course); 
       count++;
     });
+    
     console.log(courses); // display on console for debugging only
     //localStorage.setItem('SelectedCourses', JSON.stringify(courses));
     /*
@@ -48,13 +71,16 @@ function transmitCourses(){
     });*/
     }
 
-    function transmitPE(){
+    function getPE(){
       event.preventDefault();
       
       var count = 1;
       var days = [];
-      var start = 0;
-      var end = 0;
+      var startStr = document.getElementById("s_time").value;
+      var endStr = document.getElementById("e_time").value;
+      
+      var start = parseInt(startStr.replace(':',''),10);
+      var end = parseInt(endStr.replace(':',''),10);
 
 
       $('#pe_days').find('input[type=checkbox]:checked').each(function() {
@@ -63,13 +89,14 @@ function transmitCourses(){
 
            
         var personal_event = { courseName: "my_time", 
-                                sectionID: "-1", 
+                                sectionID: "000000", 
                                 instructionType:"NA", 
                                 instructionDay: days,
-                                startTime: document.getElementById("s_time").value, 
-                                endTime:document.getElementById("e_time").value};  
+                                startTime: start, 
+                                endTime:end};  
        //p_Event.push(personal_event); 
        document.getElementById('event').reset();
+       p_Event.push(personal_event);
       
       console.log(personal_event); // display on console for debugging only
       //localStorage.setItem('SelectedCourses', JSON.stringify(courses));
@@ -98,5 +125,25 @@ function transmitCourses(){
         event.preventDefault();
       });
 
-   
+   /*
+   <script>var availableTags = [
+    "CSE",
+    "BDE",
+    "ENG",
+    "CSE 12",
+    "CSE 21",
+    "ECE 15",
+    "CSE 100",
+    "CSE 110",
+    "CSE 140L",
+    "ECE 144",
+    "WAR 1",
+    "REL 101",
+    
+];
+$( "#search" ).autocomplete({
+    source: availableTags
+});
+</script>
+*/
 
