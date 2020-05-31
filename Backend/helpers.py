@@ -10,14 +10,17 @@
 #       average GPA
 #       timeSpent
 import sys
-sys.path.append('../DataBase_Scrape/')
-import ScheduleofClasses
+sys.path.append('/home/dat/ASAP/DataBase_Scrape/')
+sys.path.append('/home/dat/ASAP/Backend/database/')
+from ScheduleofClasses import getSectionByID
+from Database import get_database
 
 def score_by_capes(sectionIDs):
     scores = {'gpa':'-1', 'prof':'-1', 'timeSpent':'-1'}
-    for secID in range(len(sectionIDs)):
+    db = get_database()
+    for secID in sectionIDs:
         # get professor name and course name
-        response = getSectionByID(sectionID="021116")
+        response = getSectionByID(secID)
 
         course = response['subjectCode'] +  ' ' + response['courseCode']
         instructors = list()
@@ -26,7 +29,8 @@ def score_by_capes(sectionIDs):
                 instructors.append(instructor['instructorName'])
         courseName = course
         instructorName = str(instructors)
-        print('Course: ' + course + '\n\t' + str(instructors))
+
+        
 
 
 
@@ -74,9 +78,8 @@ def scoreGaps(startTime, endTime):
 
 if __name__ == "__main__":
     # execute only if run as a script
-    print("hello")
-    print(getSectionByID(sectionID="021116"))
-
+    sectionIDs = ["021116"]
+    score_by_capes(sectionIDs)
 
 
 
