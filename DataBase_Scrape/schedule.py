@@ -596,7 +596,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 	totalWeights = 0
 	if(len(schedules) == 0):
 		return []
-	elif(len(schedules)==1):
+	else:
 		return schedules[0]
 
 
