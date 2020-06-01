@@ -38,6 +38,13 @@ def schedule(must_haves, want_to_haves):
 									friday = []
 									saturday = []
 									sunday = []
+									finalMonday = []
+									finalTuesday = []
+									finalWednesday = []
+									finalThursday = []
+									finalFriday = []
+									finalSaturday = []
+									finalSunday = []
 									if(section1 != None):
 										for meetings in section1['meetings']:
 											if(meetings[0] == 'MO'):
@@ -54,6 +61,21 @@ def schedule(must_haves, want_to_haves):
 												saturday.append(meetings[1:])
 											elif(meetings[0] == 'SU'):
 												sunday.append(meetings[1:])
+										if(len(section1['finals']) == 3):
+											if(section1['finals'][0] == 'MO'):
+												finalMonday.append(section1['finals'][1:])
+											elif(section1['finals'][0] == 'TU'):
+												finalTuesday.append(section1['finals'][1:])
+											elif(section1['finals'][0] == 'WE'):
+												finalWednesday.append(section1['finals'][1:])
+											elif(section1['finals'][0] == 'TH'):
+												finalThursday.append(section1['finals'][1:])
+											elif(section1['finals'][0] == 'FR'):
+												finalFriday.append(section1['finals'][1:])
+											elif(section1['finals'][0] == 'SA'):
+												finalSaturday.append(section1['finals'][1:])
+											elif(section1['finals'][0] == 'SU'):
+												finalSunday.append(section1['finals'][1:])
 									if(section2 != None):
 										for meetings in section2['meetings']:
 											if(meetings[0] == 'MO'):
@@ -70,6 +92,21 @@ def schedule(must_haves, want_to_haves):
 												saturday.append(meetings[1:])
 											elif(meetings[0] == 'SU'):
 												sunday.append(meetings[1:])
+										if(len(section2['finals']) == 3):
+											if(section2['finals'][0] == 'MO'):
+												finalMonday.append(section2['finals'][1:])
+											elif(section2['finals'][0] == 'TU'):
+												finalTuesday.append(section2['finals'][1:])
+											elif(section2['finals'][0] == 'WE'):
+												finalWednesday.append(section2['finals'][1:])
+											elif(section2['finals'][0] == 'TH'):
+												finalThursday.append(section2['finals'][1:])
+											elif(section2['finals'][0] == 'FR'):
+												finalFriday.append(section2['finals'][1:])
+											elif(section2['finals'][0] == 'SA'):
+												finalSaturday.append(section2['finals'][1:])
+											elif(section2['finals'][0] == 'SU'):
+												finalSunday.append(section2['finals'][1:])
 									if(section3 != None):
 										for meetings in section3["meetings"]:
 											if(meetings[0] == 'MO'):
@@ -86,6 +123,21 @@ def schedule(must_haves, want_to_haves):
 												saturday.append(meetings[1:])
 											elif(meetings[0] == 'SU'):
 												sunday.append(meetings[1:])
+										if(len(section3['finals']) == 3):
+											if(section3['finals'][0] == 'MO'):
+												finalMonday.append(section3['finals'][1:])
+											elif(section3['finals'][0] == 'TU'):
+												finalTuesday.append(section3['finals'][1:])
+											elif(section3['finals'][0] == 'WE'):
+												finalWednesday.append(section3['finals'][1:])
+											elif(section3['finals'][0] == 'TH'):
+												finalThursday.append(section3['finals'][1:])
+											elif(section3['finals'][0] == 'FR'):
+												finalFriday.append(section3['finals'][1:])
+											elif(section3['finals'][0] == 'SA'):
+												finalSaturday.append(section3['finals'][1:])
+											elif(section3['finals'][0] == 'SU'):
+												finalSunday.append(section3['finals'][1:])
 									if(section4 != None):
 										for meetings in section4["meetings"]:
 											if(meetings[0] == 'MO'):
@@ -102,6 +154,21 @@ def schedule(must_haves, want_to_haves):
 												saturday.append(meetings[1:])
 											elif(meetings[0] == 'SU'):
 												sunday.append(meetings[1:])
+										if(len(section4['finals']) == 3):
+											if(section4['finals'][0] == 'MO'):
+												finalMonday.append(section4['finals'][1:])
+											elif(section4['finals'][0] == 'TU'):
+												finalTuesday.append(section4['finals'][1:])
+											elif(section4['finals'][0] == 'WE'):
+												finalWednesday.append(section4['finals'][1:])
+											elif(section4['finals'][0] == 'TH'):
+												finalThursday.append(section4['finals'][1:])
+											elif(section4['finals'][0] == 'FR'):
+												finalFriday.append(section4['finals'][1:])
+											elif(section4['finals'][0] == 'SA'):
+												finalSaturday.append(section4['finals'][1:])
+											elif(section4['finals'][0] == 'SU'):
+												finalSunday.append(section4['finals'][1:])
 									if(section5 != None):
 										for meetings in section5["meetings"]:
 											if(meetings[0] == 'MO'):
@@ -118,6 +185,21 @@ def schedule(must_haves, want_to_haves):
 												saturday.append(meetings[1:])
 											elif(meetings[0] == 'SU'):
 												sunday.append(meetings[1:])
+										if(len(section5['finals']) == 3):
+											if(section5['finals'][0] == 'MO'):
+												finalMonday.append(section5['finals'][1:])
+											elif(section5['finals'][0] == 'TU'):
+												finalTuesday.append(section5['finals'][1:])
+											elif(section5['finals'][0] == 'WE'):
+												finalWednesday.append(section5['finals'][1:])
+											elif(section5['finals'][0] == 'TH'):
+												finalThursday.append(section5['finals'][1:])
+											elif(section5['finals'][0] == 'FR'):
+												finalFriday.append(section5['finals'][1:])
+											elif(section5['finals'][0] == 'SA'):
+												finalSaturday.append(section5['finals'][1:])
+											elif(section5['finals'][0] == 'SU'):
+												finalSunday.append(section5['finals'][1:])
 									if(section6 != None):
 										for meetings in section6["meetings"]:
 											if(meetings[0] == 'MO'):
@@ -134,6 +216,21 @@ def schedule(must_haves, want_to_haves):
 												saturday.append(meetings[1:])
 											elif(meetings[0] == 'SU'):
 												sunday.append(meetings[1:])
+										if(len(section6['finals']) == 3):
+											if(section6['finals'][0] == 'MO'):
+												finalMonday.append(section6['finals'][1:])
+											elif(section6['finals'][0] == 'TU'):
+												finalTuesday.append(section6['finals'][1:])
+											elif(section6['finals'][0] == 'WE'):
+												finalWednesday.append(section6['finals'][1:])
+											elif(section6['finals'][0] == 'TH'):
+												finalThursday.append(section6['finals'][1:])
+											elif(section6['finals'][0] == 'FR'):
+												finalFriday.append(section6['finals'][1:])
+											elif(section6['finals'][0] == 'SA'):
+												finalSaturday.append(section6['finals'][1:])
+											elif(section6['finals'][0] == 'SU'):
+												finalSunday.append(section6['finals'][1:])
 									if(section7 != None):
 										for meetings in section7["meetings"]:
 											if(meetings[0] == 'MO'):
@@ -150,6 +247,21 @@ def schedule(must_haves, want_to_haves):
 												saturday.append(meetings[1:])
 											elif(meetings[0] == 'SU'):
 												sunday.append(meetings[1:])
+										if(len(section7['finals']) == 3):
+											if(section7['finals'][0] == 'MO'):
+												finalMonday.append(section7['finals'][1:])
+											elif(section7['finals'][0] == 'TU'):
+												finalTuesday.append(section7['finals'][1:])
+											elif(section7['finals'][0] == 'WE'):
+												finalWednesday.append(section7['finals'][1:])
+											elif(section7['finals'][0] == 'TH'):
+												finalThursday.append(section7['finals'][1:])
+											elif(section7['finals'][0] == 'FR'):
+												finalFriday.append(section7['finals'][1:])
+											elif(section7['finals'][0] == 'SA'):
+												finalSaturday.append(section7['finals'][1:])
+											elif(section7['finals'][0] == 'SU'):
+												finalSunday.append(section7['finals'][1:])
 									if(section8 != None):
 										for meetings in section8["meetings"]:
 											if(meetings[0] == 'MO'):
@@ -166,8 +278,23 @@ def schedule(must_haves, want_to_haves):
 												saturday.append(meetings[1:])
 											elif(meetings[0] == 'SU'):
 												sunday.append(meetings[1:])
+										if(len(section8['finals']) == 3):
+											if(section8['finals'][0] == 'MO'):
+												finalMonday.append(section8['finals'][1:])
+											elif(section8['finals'][0] == 'TU'):
+												finalTuesday.append(section8['finals'][1:])
+											elif(section8['finals'][0] == 'WE'):
+												finalWednesday.append(section8['finals'][1:])
+											elif(section8['finals'][0] == 'TH'):
+												finalThursday.append(section8['finals'][1:])
+											elif(section8['finals'][0] == 'FR'):
+												finalFriday.append(section8['finals'][1:])
+											elif(section8['finals'][0] == 'SA'):
+												finalSaturday.append(section8['finals'][1:])
+											elif(section8['finals'][0] == 'SU'):
+												finalSunday.append(section8['finals'][1:])
 
-									if(schedule_day(monday) == True and schedule_day(tuesday) == True and schedule_day(wednesday) == True and schedule_day(thursday) == True and schedule_day(friday) == True and schedule_day(saturday) == True and schedule_day(sunday) == True):
+									if(schedule_day(monday) == True and schedule_day(tuesday) == True and schedule_day(wednesday) == True and schedule_day(thursday) == True and schedule_day(friday) == True and schedule_day(saturday) == True and schedule_day(sunday) == True and schedule_day(finalMonday) == True and schedule_day(finalTuesday) == True and schedule_day(finalWednesday) == True and schedule_day(finalThursday) == True and schedule_day(finalFriday) == True and schedule_day(finalSaturday) == True and schedule_day(finalSunday) == True):
 										result = True;
 
 										for optional1 in want_to_haves[0]:
@@ -184,6 +311,13 @@ def schedule(must_haves, want_to_haves):
 																	optionalFriday = []
 																	optionalSaturday = []
 																	optionalSunday = []
+																	optionalFinalMonday = []
+																	optionalFinalTuesday = []
+																	optionalFinalWednesday = []
+																	optionalFinalThursday = []
+																	optionalFinalFriday = []
+																	optionalFinalSaturday = []
+																	optionalFinalSunday = []
 
 																	if(optional1 != None):
 																		for optMeetings in optional1["meetings"]:
@@ -201,6 +335,21 @@ def schedule(must_haves, want_to_haves):
 																				optionalSaturday.append(optMeetings[1:])
 																			elif(optMeetings[0] == 'SU'):
 																				optionalSaturday.append(optMeetings[1:])
+																		if(len(optional1['finals']) == 3):
+																			if(optional1['finals'][0] == 'MO'):
+																				optionalFinalMonday.append(optional1['finals'][1:])
+																			elif(optional1['finals'][0] == 'TU'):
+																				optionalFinalTuesday.append(optional1['finals'][1:])
+																			elif(optional1['finals'][0] == 'WE'):
+																				optionalFinalWednesday.append(optional1['finals'][1:])
+																			elif(optional1['finals'][0] == 'TH'):
+																				optionalFinalThursday.append(optional1['finals'][1:])
+																			elif(optional1['finals'][0] == 'FR'):
+																				optionalFinalFriday.append(optional1['finals'][1:])
+																			elif(optional1['finals'][0] == 'SA'):
+																				optionalFinalSaturday.append(optional1['finals'][1:])
+																			elif(optional1['finals'][0] == 'SU'):
+																				optionalFinalSunday.append(optional1['finals'][1:])
 																	
 																	if(optional2 != None):
 																		for optMeetings in optional2["meetings"]:
@@ -218,6 +367,21 @@ def schedule(must_haves, want_to_haves):
 																				optionalSaturday.append(optMeetings[1:])
 																			elif(optMeetings[0] == 'SU'):
 																				optionalSaturday.append(optMeetings[1:])
+																		if(len(optional2['finals']) == 3):
+																			if(optional2['finals'][0] == 'MO'):
+																				optionalFinalMonday.append(optional2['finals'][1:])
+																			elif(optional2['finals'][0] == 'TU'):
+																				optionalFinalTuesday.append(optional2['finals'][1:])
+																			elif(optional2['finals'][0] == 'WE'):
+																				optionalFinalWednesday.append(optional2['finals'][1:])
+																			elif(optional2['finals'][0] == 'TH'):
+																				optionalFinalThursday.append(optional2['finals'][1:])
+																			elif(optional2['finals'][0] == 'FR'):
+																				optionalFinalFriday.append(optional2['finals'][1:])
+																			elif(optional2['finals'][0] == 'SA'):
+																				optionalFinalSaturday.append(optional2['finals'][1:])
+																			elif(optional2['finals'][0] == 'SU'):
+																				optionalFinalSunday.append(optional2['finals'][1:])
 
 																	if(optional3 != None):
 																		for optMeetings in optional3["meetings"]:
@@ -235,6 +399,21 @@ def schedule(must_haves, want_to_haves):
 																				optionalSaturday.append(optMeetings[1:])
 																			elif(optMeetings[0] == 'SU'):
 																				optionalSaturday.append(optMeetings[1:])
+																		if(len(optional3['finals']) == 3):
+																			if(optional3['finals'][0] == 'MO'):
+																				optionalFinalMonday.append(optional3['finals'][1:])
+																			elif(optional3['finals'][0] == 'TU'):
+																				optionalFinalTuesday.append(optional3['finals'][1:])
+																			elif(optional3['finals'][0] == 'WE'):
+																				optionalFinalWednesday.append(optional3['finals'][1:])
+																			elif(optional3['finals'][0] == 'TH'):
+																				optionalFinalThursday.append(optional3['finals'][1:])
+																			elif(optional3['finals'][0] == 'FR'):
+																				optionalFinalFriday.append(optional3['finals'][1:])
+																			elif(optional3['finals'][0] == 'SA'):
+																				optionalFinalSaturday.append(optional3['finals'][1:])
+																			elif(optional3['finals'][0] == 'SU'):
+																				optionalFinalSunday.append(optional3['finals'][1:])
 
 																	if(optional4 != None):
 																		for optMeetings in optional4["meetings"]:
@@ -252,6 +431,21 @@ def schedule(must_haves, want_to_haves):
 																				optionalSaturday.append(optMeetings[1:])
 																			elif(optMeetings[0] == 'SU'):
 																				optionalSaturday.append(optMeetings[1:])
+																		if(len(optional4['finals']) == 3):
+																			if(optional4['finals'][0] == 'MO'):
+																				optionalFinalMonday.append(optional4['finals'][1:])
+																			elif(optional4['finals'][0] == 'TU'):
+																				optionalFinalTuesday.append(optional4['finals'][1:])
+																			elif(optional4['finals'][0] == 'WE'):
+																				optionalFinalWednesday.append(optional4['finals'][1:])
+																			elif(optional4['finals'][0] == 'TH'):
+																				optionalFinalThursday.append(optional4['finals'][1:])
+																			elif(optional4['finals'][0] == 'FR'):
+																				optionalFinalFriday.append(optional4['finals'][1:])
+																			elif(optional4['finals'][0] == 'SA'):
+																				optionalFinalSaturday.append(optional4['finals'][1:])
+																			elif(optional4['finals'][0] == 'SU'):
+																				optionalFinalSunday.append(optional4['finals'][1:])
 
 																	if(optional5 != None):
 																		for optMeetings in optional5["meetings"]:
@@ -269,6 +463,21 @@ def schedule(must_haves, want_to_haves):
 																				optionalSaturday.append(optMeetings[1:])
 																			elif(optMeetings[0] == 'SU'):
 																				optionalSaturday.append(optMeetings[1:])
+																		if(len(optional5['finals']) == 3):
+																			if(optional5['finals'][0] == 'MO'):
+																				optionalFinalMonday.append(optional5['finals'][1:])
+																			elif(optional5['finals'][0] == 'TU'):
+																				optionalFinalTuesday.append(optional5['finals'][1:])
+																			elif(optional5['finals'][0] == 'WE'):
+																				optionalFinalWednesday.append(optional5['finals'][1:])
+																			elif(optional5['finals'][0] == 'TH'):
+																				optionalFinalThursday.append(optional5['finals'][1:])
+																			elif(optional5['finals'][0] == 'FR'):
+																				optionalFinalFriday.append(optional5['finals'][1:])
+																			elif(optional5['finals'][0] == 'SA'):
+																				optionalFinalSaturday.append(optional5['finals'][1:])
+																			elif(optional5['finals'][0] == 'SU'):
+																				optionalFinalSunday.append(optional5['finals'][1:])
 
 																	if(optional6 != None):
 																		for optMeetings in optional6["meetings"]:
@@ -286,6 +495,21 @@ def schedule(must_haves, want_to_haves):
 																				optionalSaturday.append(optMeetings[1:])
 																			elif(optMeetings[0] == 'SU'):
 																				optionalSaturday.append(optMeetings[1:])
+																		if(len(optional6['finals']) == 3):
+																			if(optional6['finals'][0] == 'MO'):
+																				optionalFinalMonday.append(optional6['finals'][1:])
+																			elif(optional6['finals'][0] == 'TU'):
+																				optionalFinalTuesday.append(optional6['finals'][1:])
+																			elif(optional6['finals'][0] == 'WE'):
+																				optionalFinalWednesday.append(optional6['finals'][1:])
+																			elif(optional6['finals'][0] == 'TH'):
+																				optionalFinalThursday.append(optional6['finals'][1:])
+																			elif(optional6['finals'][0] == 'FR'):
+																				optionalFinalFriday.append(optional6['finals'][1:])
+																			elif(optional6['finals'][0] == 'SA'):
+																				optionalFinalSaturday.append(optional6['finals'][1:])
+																			elif(optional6['finals'][0] == 'SU'):
+																				optionalFinalSunday.append(optional6['finals'][1:])
 
 																	if(optional7 != None):
 																		for optMeetings in optional7["meetings"]:
@@ -303,8 +527,23 @@ def schedule(must_haves, want_to_haves):
 																				optionalSaturday.append(optMeetings[1:])
 																			elif(meetings1[0] == 'SU'):
 																				optionalSaturday.append(optMeetings[1:])
+																		if(len(optional7['finals']) == 3):
+																			if(optional7['finals'][0] == 'MO'):
+																				optionalFinalMonday.append(optional7['finals'][1:])
+																			elif(optional7['finals'][0] == 'TU'):
+																				optionalFinalTuesday.append(optional7['finals'][1:])
+																			elif(optional7['finals'][0] == 'WE'):
+																				optionalFinalWednesday.append(optional7['finals'][1:])
+																			elif(optional7['finals'][0] == 'TH'):
+																				optionalFinalThursday.append(optional7['finals'][1:])
+																			elif(optional7['finals'][0] == 'FR'):
+																				optionalFinalFriday.append(optional7['finals'][1:])
+																			elif(optional7['finals'][0] == 'SA'):
+																				optionalFinalSaturday.append(optional7['finals'][1:])
+																			elif(optional7['finals'][0] == 'SU'):
+																				optionalFinalSunday.append(optional7['finals'][1:])
 
-																	if(checkConflict(monday,optionalMonday) == False and checkConflict(tuesday,optionalTuesday) == False and checkConflict(wednesday,optionalWednesday) == False and checkConflict(thursday,optionalThursday) == False and checkConflict(friday,optionalFriday) == False and checkConflict(saturday,optionalSaturday) == False and checkConflict(sunday,optionalSunday) == False):
+																	if(checkConflict(monday,optionalMonday) == False and checkConflict(tuesday,optionalTuesday) == False and checkConflict(wednesday,optionalWednesday) == False and checkConflict(thursday,optionalThursday) == False and checkConflict(friday,optionalFriday) == False and checkConflict(saturday,optionalSaturday) == False and checkConflict(sunday,optionalSunday) == False and checkConflict(monday,optionalFinalMonday) == False and checkConflict(tuesday,optionalFinalTuesday) == False and checkConflict(wednesday,optionalFinalWednesday) == False and checkConflict(thursday,optionalFinalThursday) == False and checkConflict(friday,optionalFinalFriday) == False and checkConflict(saturday,optionalFinalSaturday) == False and checkConflict(sunday,optionalFinalSunday) == False):
 																		schedule = []
 																		if(section1 != None):
 																			schedule.append(section1)
@@ -354,7 +593,18 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 	while(len(tempWantHaves) < 7):
 		tempWantHaves.append([None])
 	schedules = schedule(tempMustHaves, tempWantHaves)
-	return schedules[0]
+	totalWeights = 0
+	if(len(schedules) == 0):
+		return []
+	elif(len(schedules)==1):
+		return schedules[0]
+
+
+def parseSchedule(schedule):
+	sectionIDs = []
+	for i in schedule:
+		sectionIDs.append(i['id'])
+	return sectionIDs
 
 def main():
 	# Must-takes/Personal Events
