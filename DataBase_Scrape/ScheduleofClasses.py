@@ -226,7 +226,7 @@ def get_personalEvents(personalEvents):
             # eventName = event['courseName']  # Can a user name an event?
             for day in event['instructionDay']:
                 meetings.append([day, startTime, endTime])
-            must_haves.append({'id' : 'personal event', 'meetings' : meetings, 'finals': '', 'midterms' : ''})
+            must_haves.append({'id' : 'personal event', 'meetings' : meetings, 'finals': [], 'midterms' : []})
     return must_haves
 
 
