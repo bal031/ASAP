@@ -1,5 +1,3 @@
-import scoreByCapes
-
 def schedule_day(meetings):
     last_end = -1
     for end,start in sorted( (end,start) for start,end in meetings ):
@@ -596,12 +594,24 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 		tempWantHaves.append([None])
 	schedules = schedule(tempMustHaves, tempWantHaves)
 	totalWeights = 0
+
 	if(len(schedules) == 0):
 		return []
 	else:
-		sectionIDs = parseSchedule(schedules[0])
-                #sectionRatings = scoreByCapes.score_by_capes(sectionIDs)
-                #print(sectionIDs)
+		sectionID = parseSchedule(schedules[0])
+		if(preferences['prof_rating'] == "true"):
+			totalWeights += 1
+			
+		if(preferences['avg_gpa'] == "true"):
+			totalWeights += 1
+		if(preferences['avg_time'] == "true"):
+			totalWeights += 1
+		if(preferences['class_days'] == "true"):
+			totalWeights += 1
+		if(preferences['time_pref'] == "true"):
+			totalWeights += 1
+		if(preferences['gap'] == "true"):
+			totalWeights += 1
 		return schedules[0]
 
 
@@ -631,32 +641,9 @@ def main():
 
 
 	#Start time, end time, index
-	must_takes=[]
-	#must_takes.append([{"id":1,"meetings":[["TU",80000,92000],["TH",80000,92000],["TH",100000,105000]]}])
-	#must_takes.append([{"id":2,"meetings":[["M",100000,105000],["W",100000,105000],["W",110000,115000],["F",100000,105000]]},{"id":3,"meetings":[["TU",153000,165000],["TU",140000,145000],["TH",153000,165000]]}])
-	#must_takes.append([{"id":4,"meetings":[["M",150000,155000],["W",150000,155000]]},{"id":5,"meetings":[["M",160000,165000],["W",160000,165000]]}])
-	#must_takes.append([{"id":6,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",90000,115000]],"finals":["M",150000,180000]},{"id":7,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",90000,115000]],"finals":["M",150000,180000]},{"id":8,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",90000,115000]],"finals":["M",150000,180000]},{"id":9,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",120000,145000]],"finals":["M",150000,180000]},{"id":10,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",120000,145000]],"finals":["M",150000,180000]}])
-	must_takes.append([{'id': 'personal event', 'meetings': [['TU', 900, 1000], ['TH', 900, 1000]], 'finals': '', 'midterms': ''}])
-	must_takes.append([{'meetings': [['TU', 1100, 1220], ['TH',1100, 1220], ['M', 1100, 1150]], 'finals': ['W', 1130, 1429], 'midterms': [], 'LE id': '016900', 'id': '016901'}]);
-	must_takes.append([None]);
-	must_takes.append([None]);
-	must_takes.append([None]);
-	must_takes.append([None]);
-	must_takes.append([None]);
-	must_takes.append([None]);
+	must_takes=[[{'id': 'personal event', 'meetings': [['WE', 700, 710]], 'finals': [], 'midterms': []}], [{'meetings': [['TU', 1100, 1220], ['TH', 1100, 1220], ['MO', 1100, 1150]], 'finals': ['WE', 1130, 1429], 'midterms': [], 'LE id': '016900', 'id': '016901'}]]
 
 	want_to_takes=[]
-	#want_to_takes.append([{"id":11,"meetings":[["TU",80000,92000],["TH",80000,92000],["F",110000,115000]]},None])
-	#want_to_takes.append([{"id":12,"meetings":[["M",160000,165000],["W",160000,165000],["F",160000,165000],["TH",170000,175000]]},None])
-	#want_to_takes.append([{"id":13,"meetings":[["M",160000,165000],["W",160000,165000],["F",160000,165000],["TH",170000,175000]]},None]);
-	want_to_takes.append([None]);
-	want_to_takes.append([None]);
-	want_to_takes.append([None]);
-	want_to_takes.append([None]);
-	want_to_takes.append([None]);
-	want_to_takes.append([None]);
-	want_to_takes.append([None]);
-
 
 	schedules = generateSchedule(must_takes,want_to_takes,[])
 	print(schedules)
