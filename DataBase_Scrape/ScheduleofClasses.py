@@ -12,7 +12,6 @@ from Keys import auth_key # used to generate a new access_token
 from threading import current_thread, Lock
 import json
 import copy
-from schedule import*
 
 # constants that will be used repeatedly. DO NOT change.
 access_token = None
@@ -294,11 +293,11 @@ if __name__ == "__main__": # for testing purposes
 
 #     print('Course: ' + course + '\n\t' + str(instructors))
 
-    user_courses = [{'must_have' : 'true', 'name' : 'ECE 102'},{'must_have':'true','name':'CHEM 6A'}]
+#    user_courses = [{'must_have' : 'true', 'name' : 'ECE 102'},{'must_have':'true','name':'CHEM 6A'}]
     #personal_events = [{'courseName' : 'my_time', 'startTime': 900, 'endTime': 1000, 'instructionDay' : ['TU', 'TH']}]
-    must_haves, could_haves = get_section_pairings(user_courses)
-    print(must_haves[0])
-    print(must_haves[1])
-    print(could_haves)
-    result = generateSchedule(must_haves, could_haves,[])
-    print(result)
+#    must_haves, could_haves = get_section_pairings(user_courses)
+#    print(must_haves[0])
+#    print(must_haves[1])
+#    print(could_haves)
+#    result = generateSchedule(must_haves, could_haves,[])
+#    print(result)

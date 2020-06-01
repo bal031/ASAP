@@ -597,6 +597,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 	if(len(schedules) == 0):
 		return []
 	else:
+		sectionID = parseSchedule(schedules[0])
 		return schedules[0]
 
 
