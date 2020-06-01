@@ -1,3 +1,5 @@
+import scoreByCapes
+
 def schedule_day(meetings):
     last_end = -1
     for end,start in sorted( (end,start) for start,end in meetings ):
@@ -578,10 +580,8 @@ def schedule(must_haves, want_to_haves):
 																		schedules.append(schedule)
 
 	
-	if(result == True):
-		return(schedules)
-	else:
-		return(schedules)
+	return schedules
+
 
 def generateSchedule(must_haves,want_to_haves,preferences):
 	tempMustHaves = must_haves
@@ -594,18 +594,56 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 		tempWantHaves.append([None])
 	schedules = schedule(tempMustHaves, tempWantHaves)
 	totalWeights = 0
+	capes = []
 
 	if(len(schedules) == 0):
 		return []
 	else:
-		sectionID = parseSchedule(schedules[0])
+		for tempSchedule in schedules:
+			sectionID = parseSchedule(tempSchedule)
+			capeScores = scoreByCapes.score_by_capes(sectionID)
+			gradeTotal = 0
+			timeTotal = 0
+			ratingTotal = 0
+			for i in capeScores:
+				gradeTotal += i['grade']
+				timeTotal += i['time spent']
+				ratingTotal += i['rating']
+			capes.append({'grade':gradeTotal/len(capeScores),'rating':ratingTotal/len(capeScores),'time spent':timeTotal/len(capeScores)})
 		if(preferences['prof_rating'] == "true"):
 			totalWeights += 1
-			
+			maxIndex = -1
+			index = -1
+			ratingMax = 0
+			for i in capes:
+				index += 1
+				if(i['rating'] > ratingMax):
+					ratingMax = i['rating']
+					maxIndex = index
+			return schedules[index]
+
 		if(preferences['avg_gpa'] == "true"):
 			totalWeights += 1
+			maxIndex = -1
+			index = -1
+			gradeMax = 0
+			for i in capes:
+				index += 1
+				if(i['grade'] > gradeMax):
+					gradeMax = i['grade']
+					maxIndex = index
+			return schedules[index]
 		if(preferences['avg_time'] == "true"):
 			totalWeights += 1
+			maxIndex = -1
+			index = -1
+			timeMax = 0
+			for i in capes:
+				index += 1
+				if(i['time_spent'] > timeMax):
+					timeMax = i['time_spent']
+					maxIndex = index
+			return schedules[index]
 		if(preferences['class_days'] == "true"):
 			totalWeights += 1
 		if(preferences['time_pref'] == "true"):
@@ -618,7 +656,8 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 def parseSchedule(schedule):
 	sectionIDs = []
 	for i in schedule:
-		sectionIDs.append(i['id'])
+		if(i['id'] != 'personal event'):
+			sectionIDs.append(i['id'])
 	return sectionIDs
 
 def main():
