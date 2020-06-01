@@ -1,11 +1,15 @@
-    //var socket = io.connect('http://localhost:3000');
+    var socket = io.connect('http://localhost:3000');
+    // Client to server holders
     var user_data = [];
     var p_Event = []; 
-    var p_Reference = [];
+    var p_Preference = [];
     var courses = [];
-
+    var term = [];
+    var calendarEl; 
+    // Server to client holders
+    var data_Load=[];
+        
     
-
     function search(){
     $(document).ready(function(){       
       $('#selectable').html('');     
@@ -20,30 +24,94 @@
         }
        });   
       });  
-
     });
 }
 
+$(document).ready(function(){
+  var Load = window.sessionStorage.getItem('json');
+  console.log(Load);
+  data_Load = JSON.parse(Load);
+  var tr = [];
+  console.log(data_Load);
+      tr.push('<tr>');
+      tr.push("<td>" + data_Load.display[0].name + "</td>");
+      tr.push("<td>" + data_Load.display[0].professor + "</td>");
+      tr.push("<td>" + data_Load.display[0].days+" "+data_Load.display[0].start+"-"+data_Load.display[0].end + "</td>");
+      tr.push("<td>" + " " + "</td>");
+      tr.push('</tr>');
+     
+  $('#class_schedule').append($(tr.join('')));
+  });
+
+socket.on('connect', function(data) {
+  socket.emit('join', 'Client enter the room!');       
+});
+
+socket.on("schedule_ready", function(data){
+  console.log(data); 
+
+  UIkit.notification("Building Schedule", {status:'primary'}); 
+  //var classlist = JSON.parse(data);
+  //data_Load.push(classlist);
+  //console.log(data_Load);
+  window.sessionStorage.setItem('json', data);
+  calendarEl = document.getElementById('calendar');
+  var Load = window.sessionStorage.getItem('json');
+  data_Load = JSON.parse(Load);
+  
+  
+  console.log(data_Load.schedule[0]);
+
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
+    header:{right: 'dayGridMonth,timeGridWeek'},
+    events: [data_Load.schedule[0]]
+});  
+
+  calendar.render();
+  
+});
+
+
 function transmit(){
   getCourses();
-  getReference();
+  getPreference();
+  getTerm();  
+  window.localStorage.clear();
+  var user_data = {currentTerm: term, course: courses, personalEvent:p_Event, preference: p_Preference};
   
-
-  var data = {course: courses, personalEvent:p_Event, reference: p_Reference};
+  console.log(user_data);
+  UIkit.notification("Thank You For Waiting", {status:'primary'})
   
-  console.log(data);
-  //socket.on('connect', function(data) {
-      //  socket.emit('generate schedule', JSON.stringify(data)); 
+  //socket.emit('join', 'Client enter the room!');  
+  socket.emit('generate', JSON.stringify(user_data)); 
+  
+  socket.on('comfirmation', function(msg){
+    UIkit.notification(msg, {status:'success'});    
+    console.log(msg);
+  });
 
+   event.preventDefault();
+  //Clear Arrays
+  courses = [];
+  p_Event = [];
+  p_Preference = [];
+  term = [];
+  
 }
 
-function getReference(){
+function getTerm(){
+  var curr_Term = {term : $("#cur_term").val()};
+  term.push(curr_Term);
+}
+
+function getPreference(){
     
     var ref = {transportation: $("#trans").val(), prof_Rating: $("#prof_rating").val(), 
     avg_GPA: $("#avg_gpa").val(), avg_Time: $("#avg_time").val(), gap: $("#gap").val(),
     class_Days: $("#class_days").val(), time_Ref: $("#time_pref").val()}
  
-  p_Reference.push(ref);
+  p_Preference.push(ref);
 }
 
 function getCourses(){
@@ -99,6 +167,7 @@ function getCourses(){
        p_Event.push(personal_event);
       
       console.log(personal_event); // display on console for debugging only
+      UIkit.notification("Personal Event Added", {status:'success'})
       //localStorage.setItem('SelectedCourses', JSON.stringify(courses));
       
       //socket.on('connect', function(data) {
