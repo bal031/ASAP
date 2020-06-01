@@ -25,6 +25,7 @@ def checkConflict(meetings,optional):
 def schedule(must_haves, want_to_haves):
 	result = False;
 	schedules = []
+	days = []
 	for section1 in must_haves[0]:
 		for section2 in must_haves[1]:
 			for section3 in must_haves[2]:
@@ -578,9 +579,25 @@ def schedule(must_haves, want_to_haves):
 																		if(optional7 != None):
 																			schedule.append(optional7)
 																		schedules.append(schedule)
+																		day = 7
+																		if(len(monday) != 0 or len(optionalMonday) != 0):
+																			day -= 1
+																		if(len(tuesday) != 0 or len(optionalTuesday) != 0):
+																			day -= 1
+																		if(len(wednesday) != 0 or len(optionalWednesday) != 0):
+																			day -= 1
+																		if(len(thursday) != 0 or len(optionalThursday) != 0):
+																			day -= 1
+																		if(len(friday) != 0 or len(optionalFriday) != 0):
+																			day -= 1
+																		if(len(saturday) != 0 or len(optionalSaturday) != 0):
+																			day -= 1
+																		if(len(sunday) != 0 or len(optionalSunday) != 0):
+																			day -= 1
+																		days.append(day)
 
 	
-	return schedules
+	return schedules, days
 
 
 def generateSchedule(must_haves,want_to_haves,preferences):
@@ -592,7 +609,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 		i.append(None)
 	while(len(tempWantHaves) < 7):
 		tempWantHaves.append([None])
-	schedules = schedule(tempMustHaves, tempWantHaves)
+	schedules, days = schedule(tempMustHaves, tempWantHaves)
 	totalWeights = 0
 	capes = []
 
@@ -644,8 +661,28 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 					timeMin = i['time spent']
 					minIndex = index
 			return schedules[minIndex]
-		if(preferences['class_days'] == "true"):
+		if(preferences['class_days'] == "false"):
 			totalWeights += 1
+			minIndex = -1
+			index = -1
+			dayMin = 7
+			for i in days:
+				index += 1
+				if(i < dayMin):
+					dayMin = i
+					minIndex = index
+			return schedules[minIndex]
+		elif(preferences['class_days'] == 'true'):
+			totalWeights += 1
+			maxIndex = -1
+			index = -1
+			dayMin = 0
+			for i in days:
+				index += 1
+				if(i > dayMin):
+					dayMin = i
+					maxIndex = index
+			return schedules[maxIndex]
 
 		if(preferences['time_pref'] == "true"):
 			totalWeights += 1
