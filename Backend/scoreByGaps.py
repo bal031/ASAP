@@ -8,6 +8,7 @@ from Database import get_database, close_database, get_capes_by_course_and_prof,
 
 
 """
+    comparision function for sorting meetings
     meeting 1 is less than meeting 2 if M1 occurs earlier than M2
 """
 def meeting_compare(meeting1, meeting2):
@@ -25,7 +26,9 @@ def meeting_compare(meeting1, meeting2):
 """
     calculate the largest gap between classes
     input: list of section IDs
-    return: list of cape rating for each associated section IDs
+    return: list of 2 items, where the first item is the hour amount and second item is minute amount
+    ie 2 hours and 30 mins gap will be returned as [2,30]. if there is only 1 meeting for each day of the week
+    then gap is 0 hours and 0 mins 
 """
 def score_by_gaps(sectionIDs):
     meetings = []
@@ -89,7 +92,8 @@ def score_by_gaps(sectionIDs):
 
     gap_hour = max_start_hour - max_end_hour
     gap_min = max_start_min - max_end_min
-    return(str(gap_hour) +" hour(s) and " + str(gap_min) + " minute(s)")
+    return [gap_hour, gap_min]
+    #return(str(gap_hour) +" hour(s) and " + str(gap_min) + " minute(s)")
 
 if __name__ == "__main__":
     # execute only if run as a script
