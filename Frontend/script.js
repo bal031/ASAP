@@ -5,7 +5,7 @@
     var p_Preference;
     var courses = [];
     var term;
-    var calendarEl; 
+   
     // Server to client holders
     var data_Load=[];
         
@@ -33,13 +33,14 @@ $(document).ready(function(){
   data_Load = JSON.parse(Load);
   var tr = [];
   console.log(data_Load);
+  for(i = 0; i<data_Load.display.length; i++){
       tr.push('<tr>');
-      tr.push("<td>" + data_Load.display[0].name + "</td>");
-      tr.push("<td>" + data_Load.display[0].professor + "</td>");
-      tr.push("<td>" + data_Load.display[0].days+" "+data_Load.display[0].start+"-"+data_Load.display[0].end + "</td>");
+      tr.push("<td>" + data_Load.display[i].name + "</td>");
+      tr.push("<td>" + data_Load.display[i].professor + "</td>");
+      tr.push("<td>" + data_Load.display[i].days+" "+data_Load.display[i].start+"-"+data_Load.display[i].end + "</td>");
       tr.push("<td>" + " " + "</td>");
       tr.push('</tr>');
-     
+    }
   $('#class_schedule').append($(tr.join('')));
   });
 
@@ -57,26 +58,38 @@ socket.on("schedule_ready", function(data){
   window.sessionStorage.setItem('json', data);
   calendarEl = document.getElementById('calendar');
   var Load = window.sessionStorage.getItem('json');
-  data_Load = JSON.parse(Load);
-  
+  data_Load = JSON.parse(Load); 
   
   console.log(data_Load.schedule[0]);
 
-  var calendar = new FullCalendar.Calendar(calendarEl, {
-    plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
-    header:{right: 'dayGridMonth,timeGridWeek'},
-    events: [data_Load.schedule[0]]
-});  
+  var calendarEl = document.getElementById('calendar');
 
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          plugins: ['interaction', 'dayGrid', 'timeGrid', 'list']      
+    });       
+    calendar.changeView( 'timeGridWeek');        
+       
+    // Adding Events recieved
+    for(i=0; i< data_Load.schedule.length; i++)
+    {
+      calendar.addEvent(data_Load.schedule[i]);
+    }       
   calendar.render();
+ 
+
   
 });
 
 
 function transmit(){
   getCourses();
+  if(courses.length==0){
+    alert("Please remember to select your class.");
+    return;
+  }
   getPreference();
-  getTerm();  
+  getTerm();
+
   window.localStorage.clear();
   var user_data = {currentTerm: term, course: courses, personalEvent:p_Event, preference: p_Preference};
   
@@ -107,7 +120,7 @@ function getTerm(){
 
 function getPreference(){
     
-    p_Preference = {transportation: $("#trans").val(), prof_Rating: $("#prof_rating").val(), 
+    p_Preference = {prof_Rating: $("#prof_rating").val(), 
     avg_GPA: $("#avg_gpa").val(), avg_Time: $("#avg_time").val(), gap: $("#gap").val(),
     class_Days: $("#class_days").val(), time_Ref: $("#time_pref").val()}
  
@@ -184,7 +197,7 @@ function getCourses(){
         var str = "\""+name+"\"";
        
         
-  document.getElementById("course-list").innerHTML += "<li id="+id+">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="+str+" type=\"checkbox\">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+courseName+"</li>";
+  document.getElementById("course-list").innerHTML += "<li id="+id+">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="+str+" type=\"checkbox\" checked>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+courseName+"</li>";
   event.preventDefault();
   document.getElementById(courseName).remove();
 }
