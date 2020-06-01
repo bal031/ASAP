@@ -8,6 +8,7 @@ import json
 from time import sleep, time
 import Schedule 
 import ScheduleofClasses
+import asyncio
 
 # Global assignments, plus they need to run first. 
 static_path = None
@@ -80,10 +81,20 @@ async def receive_schedule(sid, data):
     session = await sio.get_session(sid)
     log('Generate schedule reqeuest from: ' + session['address'])
     await sio.emit('comfirmation', 'Data Received. Optimizing Schedule...', room=sid) # NOTE typo on the UI for comfirmation, should be confirmation
-    
-    input_dict = json.loads(data) 
-    print('input_dict\n', input_dict)
     user = session['user']
+    asyncio.ensure_future(generate_schedule(input_data=data, user=user))
+    print("\n\n NOT WAITIN\n\n")
+    
+
+async def generate_schedule(input_data, user: User):
+    """
+    Middle man between socket server and Schedule.py. This allows for proper asynchronous calls so we 
+    don't slow down the webserver.
+    Paremters: 
+        input_data: raw data string from the client. 
+    """
+    input_dict = json.loads(input_data) 
+    print('input_dict\n', input_dict)
     user_courses = input_dict['course']
     currentTerm = input_dict['currentTerm']
     personalEvents = input_dict['personalEvent']
@@ -91,7 +102,7 @@ async def receive_schedule(sid, data):
     must_haves, could_haves = ScheduleofClasses.get_section_pairings(user_courses=user_courses, termCode=currentTerm, \
         personalEvents=personalEvents)
 
-    print('must_haves:\n', must_haves)
+    print('must_haves:\n', must_haves, '\nwant_to_haves: \n', could_haves, '\nprefs: \n:', input_dict['preference'])
     user.schedule = Schedule.generateSchedule(must_haves=must_haves, want_to_haves=could_haves, \
         preferences=input_dict['preference'])
     print('Schedule: \n', user.schedule) # save raw output of schedule
@@ -120,7 +131,7 @@ def convert_schedule(user: User):
             for ID in ids: 
                 response = ScheduleofClasses.getSectionByID(sectionID=ID)
                 section = response['sections'][0] # only returns a single section
-                title = response['subjectCode'] + ' ' + response['courseCode'] + ' ' + section['instructionType']
+                title = response['subjectCode'] + ' ' + response['courseCode'] + ' ' + section['instructionType'] + ' ' + section['sectionCode']
                 daysOfWeek = []
                 for meeting in section['recurringMeetings']:
                     dayCode = dayCodeDict[meeting['dayCode']] # convert dayCode to a number e.g. SU to 0
@@ -188,6 +199,8 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
+    # must_takes = [[{'meetings': [['TU', 1100, 1220], ['TH', 1100, 1220], ['MO', 1100, 1150]], 'finals': ['WE', 1130, 1429], 'midterms': [], 'LE id': '016900', 'id': '016901'}]]
+    # want_to_takes = []
+    # preference = {'prof_rating':'false','avg_gpa':'false','avg_time':'true','class_days':'none','time_pref':'none','gap':'none'}
+    # schedules = Schedule.generateSchedule(must_takes,want_to_takes,preference)
+    # print(schedules)
