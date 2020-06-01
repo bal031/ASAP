@@ -579,21 +579,21 @@ def schedule(must_haves, want_to_haves):
 																		if(optional7 != None):
 																			schedule.append(optional7)
 																		schedules.append(schedule)
-																		day = 7
+																		day = 0
 																		if(len(monday) != 0 or len(optionalMonday) != 0):
-																			day -= 1
+																			day += 1
 																		if(len(tuesday) != 0 or len(optionalTuesday) != 0):
-																			day -= 1
+																			day += 1
 																		if(len(wednesday) != 0 or len(optionalWednesday) != 0):
-																			day -= 1
+																			day += 1
 																		if(len(thursday) != 0 or len(optionalThursday) != 0):
-																			day -= 1
+																			day += 1
 																		if(len(friday) != 0 or len(optionalFriday) != 0):
-																			day -= 1
+																			day += 1
 																		if(len(saturday) != 0 or len(optionalSaturday) != 0):
-																			day -= 1
+																			day += 1
 																		if(len(sunday) != 0 or len(optionalSunday) != 0):
-																			day -= 1
+																			day += 1
 																		days.append(day)
 
 	
@@ -676,11 +676,11 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 			totalWeights += 1
 			maxIndex = -1
 			index = -1
-			dayMin = 0
+			dayMax = 0
 			for i in days:
 				index += 1
-				if(i > dayMin):
-					dayMin = i
+				if(i > dayMax):
+					dayMax = i
 					maxIndex = index
 			return schedules[maxIndex]
 
@@ -718,10 +718,10 @@ def main():
 
 
 	#Start time, end time, index
-	must_takes=[[{'id': 'personal event', 'meetings': [], 'finals': [], 'midterms': []}], [{'meetings': [], 'finals': [], 'midterms': [], 'LE id': '016900', 'id': '020992'},{'meetings': [], 'finals': [], 'midterms': [], 'LE id': '016900', 'id': '021177'},{'meetings':[],'finals':[],'id':'020706'}]]
+	must_takes=[[{'id': 'personal event', 'meetings': [], 'finals': [], 'midterms': []}], [{'meetings': [['MO',110,120]], 'finals': [], 'midterms': [], 'LE id': '016900', 'id': '020992'},{'meetings': [], 'finals': [], 'midterms': [], 'LE id': '016900', 'id': '021177'},{'meetings':[['MO',110,120],['TU',110,120]],'finals':[],'id':'020706'}]]
 
 	want_to_takes=[]
-	preference = {'prof_rating':'false','avg_gpa':'false','avg_time':'true','class_days':'none','time_pref':'none','gap':'none'}
+	preference = {'prof_rating':'false','avg_gpa':'false','avg_time':'false','class_days':'false','time_pref':'none','gap':'none'}
 	schedules = generateSchedule(must_takes,want_to_takes,preference)
 	print(schedules)
 	#max = 0
