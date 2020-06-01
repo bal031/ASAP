@@ -27,7 +27,6 @@ def score_by_capes(sectionIDs):
         instructor_name = str(instructors).replace('[', '')
         instructor_name = instructor_name.replace('\'', '')
         instructor_name = instructor_name.replace(']', '')
-
         capes = get_capes_by_course_and_prof(subject_code, course_code, instructor_name , database)
         
         grade_sum = 0
@@ -47,10 +46,16 @@ def score_by_capes(sectionIDs):
                 if key == "hours_per_week":
                     time_spent_sum += capes[i][key]
                     time_spent_count += 1
-
-        grade_avg = grade_sum / grade_count
-        rating_avg = rating_sum / rating_count
-        time_spent_avg = time_spent_sum / time_spent_count
+        
+        grade_avg = 0.0
+        if(grade_count != 0):
+            grade_avg = grade_sum / grade_count
+        rating_avg = 0.0
+        if(rating_count != 0):
+            rating_avg = rating_sum / rating_count
+        time_spent_avg = 100.0
+        if(time_spent_count != 0):
+            time_spent_avg = time_spent_sum / time_spent_count
         cape_dict = {
             "section ID": secID,
             "grade": grade_avg,
@@ -63,7 +68,7 @@ def score_by_capes(sectionIDs):
 
 if __name__ == "__main__":
     # execute only if run as a script
-    sectionIDs = ["021682", "021686", "022097", "016644"]	
+    sectionIDs = ["020992", "021177", "020706"]	
     section_rating_list = score_by_capes(sectionIDs)
     for dictionary in section_rating_list:
         for key in dictionary:

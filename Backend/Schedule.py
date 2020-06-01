@@ -620,7 +620,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 				if(i['rating'] > ratingMax):
 					ratingMax = i['rating']
 					maxIndex = index
-			return schedules[index]
+			return schedules[maxIndex]
 
 		if(preferences['avg_gpa'] == "true"):
 			totalWeights += 1
@@ -632,20 +632,21 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 				if(i['grade'] > gradeMax):
 					gradeMax = i['grade']
 					maxIndex = index
-			return schedules[index]
+			return schedules[maxIndex]
 		if(preferences['avg_time'] == "true"):
 			totalWeights += 1
-			maxIndex = -1
+			minIndex = -1
 			index = -1
-			timeMax = 0
+			timeMin = 10000
 			for i in capes:
 				index += 1
-				if(i['time_spent'] > timeMax):
-					timeMax = i['time_spent']
-					maxIndex = index
-			return schedules[index]
+				if(i['time spent'] < timeMin):
+					timeMin = i['time spent']
+					minIndex = index
+			return schedules[minIndex]
 		if(preferences['class_days'] == "true"):
 			totalWeights += 1
+
 		if(preferences['time_pref'] == "true"):
 			totalWeights += 1
 		if(preferences['gap'] == "true"):
@@ -680,11 +681,11 @@ def main():
 
 
 	#Start time, end time, index
-	must_takes=[[{'id': 'personal event', 'meetings': [['WE', 700, 710]], 'finals': [], 'midterms': []}], [{'meetings': [['TU', 1100, 1220], ['TH', 1100, 1220], ['MO', 1100, 1150]], 'finals': ['WE', 1130, 1429], 'midterms': [], 'LE id': '016900', 'id': '016901'}]]
+	must_takes=[[{'id': 'personal event', 'meetings': [], 'finals': [], 'midterms': []}], [{'meetings': [], 'finals': [], 'midterms': [], 'LE id': '016900', 'id': '020992'},{'meetings': [], 'finals': [], 'midterms': [], 'LE id': '016900', 'id': '021177'},{'meetings':[],'finals':[],'id':'020706'}]]
 
 	want_to_takes=[]
-
-	schedules = generateSchedule(must_takes,want_to_takes,[])
+	preference = {'prof_rating':'false','avg_gpa':'false','avg_time':'true','class_days':'none','time_pref':'none','gap':'none'}
+	schedules = generateSchedule(must_takes,want_to_takes,preference)
 	print(schedules)
 	#max = 0
 	#for i in schedules:
