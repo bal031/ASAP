@@ -9,8 +9,8 @@
 #   they have not been tested. Proceed with caution.  
 
 import mysql.connector
-USER = 'python'
-PASSWORD = 'password'
+USER = 'python_read_write'
+PASSWORD = '6Uz2yaSHGKJO4rZEsrrkMzTd3X4f6dakBY1PKI3YTylXAgACNpQpFuYmdXLHqqI7'
 DATABASE = 'asap_database'
 HOST = 'localhost'
 
