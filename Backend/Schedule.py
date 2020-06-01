@@ -1,3 +1,5 @@
+import scoreByCapes
+
 def schedule_day(meetings):
     last_end = -1
     for end,start in sorted( (end,start) for start,end in meetings ):
@@ -597,7 +599,9 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 	if(len(schedules) == 0):
 		return []
 	else:
-		sectionID = parseSchedule(schedules[0])
+		sectionIDs = parseSchedule(schedules[0])
+                #sectionRatings = scoreByCapes.score_by_capes(sectionIDs)
+                #print(sectionIDs)
 		return schedules[0]
 
 

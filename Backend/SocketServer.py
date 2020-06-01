@@ -6,7 +6,7 @@ sys.path.append('/home/nate/ASAP/DataBase_Scrape/')
 from LogASAP import log, setup_log, LogASAP, LOG_ERROR, LOG_INFO
 import json
 from time import sleep, time
-import schedule 
+import Schedule 
 import ScheduleofClasses
 
 # Global assignments, plus they need to run first. 
@@ -82,6 +82,7 @@ async def receive_schedule(sid, data):
     await sio.emit('comfirmation', 'Data Received. Optimizing Schedule...', room=sid) # NOTE typo on the UI for comfirmation, should be confirmation
     
     input_dict = json.loads(data) 
+    print('input_dict\n', input_dict)
     user = session['user']
     user_courses = input_dict['course']
     currentTerm = input_dict['currentTerm']
@@ -91,7 +92,7 @@ async def receive_schedule(sid, data):
         personalEvents=personalEvents)
 
     print('must_haves:\n', must_haves)
-    user.schedule = schedule.generateSchedule(must_haves=must_haves, want_to_haves=could_haves, \
+    user.schedule = Schedule.generateSchedule(must_haves=must_haves, want_to_haves=could_haves, \
         preferences=input_dict['preference'])
     print('Schedule: \n', user.schedule) # save raw output of schedule
 
@@ -111,6 +112,7 @@ def convert_schedule(user: User):
     dayCodeDict = { 'SU' : 0, 'MO' : 1, 'TU' : 2, 'WE' : 3, 'TH' : 4, 'FR' : 5, 'SA' : 6} # days of the week constants
     new_display = [] 
     new_schedule = []
+    test = [{'id': 'personal event', 'LE id': 'personal event', 'meetings': [['WE', 1010, 1020], ['TH', 1010, 1020]], 'finals': [], 'midterms': []}, {'meetings': [['TU', 1100, 1220], ['TH', 1100, 1220], ['MO', 1100, 1150]], 'finals': ['WE', 1130, 1429], 'midterms': [], 'LE id': '016900', 'id': '016901'}]
     for course in user.schedule:
         ids = [course['LE id'], course['id']]
         # get meetings for both
@@ -127,7 +129,12 @@ def convert_schedule(user: User):
                     endTime = convertTime(meeting['endTime'])
                 new_schedule.append({'title': title, 'startTime': startTime, 'endTime': endTime, 'daysOfWeek': daysOfWeek})
         else:
-            pass
+            dayCode = []
+            for meeting in course['meetings']:
+                dayCode.append(dayCodeDict[meeting[0]])
+                startTime = convertTime(str(meeting[1]))
+                endTime = convertTime(str(meeting[2]))
+            new_schedule.append({'title': ids[1], 'startTime': startTime, 'endTime': endTime, 'daysOfWeek': dayCode})
     
     return [new_display, new_schedule]
 

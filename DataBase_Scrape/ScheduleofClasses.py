@@ -275,8 +275,8 @@ def get_additionalMeetings(section : dict):
 # [{"id":6,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",90000,115000]],"finals":["M",150000,180000]},{"id":7,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",90000,115000]],"finals":["M",150000,180000]},{"id":8,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",90000,115000]],"finals":["M",150000,180000]},{"id":9,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",120000,145000]],"finals":["M",150000,180000]},{"id":10,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",120000,145000]],"finals":["M",150000,180000]}]
 
 
-
-# if __name__ == "__main__": # for testing purposes
+"""
+if __name__ == "__main__": # for testing purposes
 #     print("attempting to make a request...\n\n")
 #     # print(json.dumps((getSection(termCode='SP20', subjectCode='CSE',courseCode='110'))))
 #     # print(search(termCode='SP20', subjectCodes="CSE", courseCode="110", limit=1))
@@ -301,3 +301,4 @@ def get_additionalMeetings(section : dict):
 #    print(could_haves)
 #    result = generateSchedule(must_haves, could_haves,[])
 #    print(result)
+"""

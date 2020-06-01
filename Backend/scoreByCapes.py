@@ -10,10 +10,7 @@ from Database import get_database, close_database, get_capes_by_course_and_prof,
     return: list of cape rating for each associated section IDs
 """
 def score_by_capes(sectionIDs):
-    scores = {'gpa':'-1', 'prof':'-1', 'timeSpent':'-1'}
     database = get_database()
-    capes = get_capes_by_course_and_prof("CSE", "110", "Gillespie, Gary N", database)
-
     sections_ratings = []
 
     for secID in sectionIDs:
@@ -66,7 +63,7 @@ def score_by_capes(sectionIDs):
 
 if __name__ == "__main__":
     # execute only if run as a script
-    sectionIDs = {"021682", "021686", "022097", "016644"}	
+    sectionIDs = ["021682", "021686", "022097", "016644"]	
     section_rating_list = score_by_capes(sectionIDs)
     for dictionary in section_rating_list:
         for key in dictionary:
