@@ -217,7 +217,7 @@ def get_personalEvents(personalEvents):
     """
     Personal events are treated like an other must have class.
     """
-    must_haves = list()
+    must_haves = []
     if personalEvents is not None:
         for event in personalEvents:
             meetings = list()
@@ -226,7 +226,7 @@ def get_personalEvents(personalEvents):
             # eventName = event['courseName']  # Can a user name an event?
             for day in event['instructionDay']:
                 meetings.append([day, startTime, endTime])
-            must_haves.append({'id' : 'personal event', 'meetings' : meetings, 'finals': [], 'midterms' : []})
+            must_haves.append([{'id' : 'personal event', 'meetings' : meetings, 'finals': [], 'midterms' : [], 'LE id': 'personal event'}])
     return must_haves
 
 
