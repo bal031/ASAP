@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Triton Autoscheduler</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+        <link src="jquery/jquery-ui.css" rel="stylesheet">
+        
+        <script src="js/uikit-icons.min.js"></script>
+               
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="css/uikit.min.css" />
+        <script src="js/uikit.min.js"></script>
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.css">
+        <link rel="stylesheet" type="text/css" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css">
+       
+        <link rel="stylesheet" type="text/css" href="css/default.css">
+        <link rel="stylesheet" type="text/css" href="css/icons.css">
+		<link rel="stylesheet" type="text/css" href="css/components/autocomplete.css">
+        <script src="js/components/autocomplete.min.js"></script>
+        
+        <link href='packages/core/main.css' rel='stylesheet' />
+        <link href='packages/list/main.css' rel='stylesheet' />
+    
+        <script src='packages/core/main.js'></script>
+        <script src='packages/list/main.js'></script>
+
+        <link href='packages/core/main.css' rel='stylesheet' />
+<link href='packages/daygrid/main.css' rel='stylesheet' />
+<link href='packages/timegrid/main.css' rel='stylesheet' />
+<link href='packages/list/main.css' rel='stylesheet' />
+<script src='packages/core/main.js'></script>
+<script src='packages/interaction/main.js'></script>
+<script src='packages/daygrid/main.js'></script>
+<script src='packages/timegrid/main.js'></script>
+<script src='packages/list/main.js'></script>
+        <style>
+            
+            #selectable .ui-selecting { background: rgb(160, 160, 160); }
+            #selectable .ui-selected { background: rgb(104, 104, 104); color: white; }
+            
+            #course-list .ui-selecting { background: rgb(160, 160, 160); }
+            #course-list .ui-selected { background: rgb(104, 104, 104); color: white; }
+            
+            </style>
+           
+            <script>
+                $(function() {
+                   $( "#selectable" ).selectable({
+                      selected: function() {
+                         var result = $( "#result" ).empty();
+                         $( ".ui-selected", this ).each(function() {
+                            event.preventDefault();
+                            var myId = $(this).prop('id');
+                            document.getElementById("add_class").onclick = function() {fillList(myId)};
+                         });
+                      }
+                   });
+                });
+             </script>           
+        
+    </head>
+    <body>
+        <script>
+            $(function() {
+               $( "#course-list" ).selectable({
+                  selected: function() {
+                     var result = $( "#result" ).empty();
+                     $( ".ui-selected", this ).each(function() {
+                        var myId = $(this).prop('id');
+                        event.preventDefault();
+                        document.getElementById("remove_class").onclick = function() {document.getElementById(myId).remove()};
+                        
+                     });
+                  }
+               });
+            });
+         </script>
+         <script src="script.js"></script>
+        <div class="uk-container-medium uk-container-center uk-margin-top">                
+               
+            <div class="uk-grid-seperator uk-text-center">
+                <img data-src="assets/logo1.png"
+     sizes="(min-width: 30px) 50px, 100vw" width="90" height="" alt="" uk-align="middle" uk-img>
+                <img data-src="assets/ucsd-header-1.jpg"
+     sizes="(min-width: 100px) 400px, 100vw" width="300" height="" alt="" uk-align="middle" uk-img>
+            </div>
+            <div class="uk-margin-small-top ">
+                <ul class="uk-flex-center" uk-tab>
+                    <li class="uk-active"><a href="#">Home</a></li>
+                    <li><a href="#">What's New</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Login</a></li>
+                </ul>
+            </div>
+            <div class="uk-container uk-container-center uk-container-small uk-margin-bottom">
+               
+                    <div class="uk-flex uk-flex-center"><label class="uk-text-middle uk-text-large">Term:</label><select class="uk-select uk-width-auto  uk-margin-small-right" id="cur_term">
+                        <option value="FA20">FALL 2020</option>
+                        <option value="S120">SUMMER S1</option>
+                        <option value="S220">SUMMER S2</option>
+                        <option value="SP20">SPRING 2020</option>
+                    </select>
+					<div class="uk-autocomplete uk-form uk-width-1-2" data-uk-autocomplete="{source:'search.json'}">
+                        <input class="uk-input uk-text-left uk-width" type="text" id="search" placeholder="Class Search">
+                        </div>
+                        <button onclick="search()" id="search_btn" class="uk-button uk-button-primary uk-text-right">Search</button>                        
+                    </div>
+                </div>
+                <div class="uk-container uk-container-small uk-container-center ">
+                    <div class="uk-child-width-1-2@s" uk-grid>
+                        
+                       <div id="selectable" class="uk-panel uk-panel-scrollable">                      
+                        <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Search Result</div>                  
+                                         
+                   
+                       </div>                       
+                            
+                       
+                        <div id="course-list" class="uk-background-muted uk-scrollable-box">                                                       
+                            <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Must Have  &nbsp &nbsp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  Class</div>
+                                               
+                    </div>               
+                
+                </div>  
+                   
+                    </div>               
+                         
+                   
+                </div>
+                <ul uk-accordion class="uk-container uk-container-center uk-container-small uk-margin-bottom">
+                    <li class="uk-close">
+                        <a class="uk-accordion-title uk-tile-muted" href="#">Add Personal Event</a>
+                        <div class="uk-accordion-content">
+                           <form id="event" autocomplete="off" >
+                            <div class="uk-grid uk-margin-bottom" id="pe_days">
+                                <div class="uk-grid-small uk-child-width-auto">
+                                    <label><input class="uk-checkbox" type="checkbox" value="MO"> Monday</label>
+                                    <label><input class="uk-checkbox" type="checkbox" value="TU"> Tuesday</label>
+                                    <label><input class="uk-checkbox" type="checkbox" value="WE"> Wednesday</label>
+                                    <label><input class="uk-checkbox" type="checkbox" value="TH"> Thursday</label>
+                                    <label><input class="uk-checkbox" type="checkbox" value="FI"> Friday</label>
+                                </div>  
+                                </div>
+                                <div>                               
+                                    <label>From:</label>
+                                   <input class="timepicker" id="s_time" value="">                                
+
+                                    <label>To: </label>
+                                    <input class="timepicker" id="e_time" value="">                          
+
+                                <button onclick="getPE()" id="pe_btn" type="reset" class="uk-button uk-button-primary uk-margin-left">Add Event</button>
+                            </div>
+                                
+                        </form>           
+                                
+                            
+                          
+                            
+                        </div>
+                    </li>
+                    </ul>
+                    
+                <div class="uk-margin-small uk-flex-center uk-text-center">
+                    <div class="uk-button-group">
+                        <button id="add_class" onclick="" class="uk-button uk-button-secondary">Add</button>
+                        <button id="remove_class" onclick="" class="uk-button uk-button-secondary">Remove</button>
+                        <button class="uk-button uk-button-secondary">Clear</button>
+                        <button class="uk-button uk-button-secondary " type="button" uk-toggle="target: #modal-example">Done</button>
+                    </div>
+                </div>
+                </form>
+            
+            </div>
+             
+            
+            <div id="modal-example" uk-modal>
+                <div class="uk-modal-dialog uk-modal-body">
+                    <h2 class="uk-modal-title">Selections</h2>
+                    <form id="preference">
+                        <fieldset class="uk-fieldset">
+                            <div style="float:left;margin-right:30px;">
+                            <p style="font-size:10px">Transportation</p>
+                                <select id="trans" style="width:105px">
+                                    <option value="none">None</option>
+                                    <option value="walk">Walking</option>
+                                    <option value="bike">Bike</option>
+                                    <option value="car">Car</option>
+                                </select>
+                            </div>
+                            <div style="float:left;margin-right:30px">
+                            <p style="font-size:10px">Professor Rating</p>
+                                <select id="prof_rating">
+                                    <option value="false">Not Important</option>
+                                    <option value="none" selected>None</option>
+                                    <option value="true">Important</option>
+                                </select>
+                            </div>
+                            <div style="float:left;margin-right:30px">
+                            <p style="font-size:10px">Average GPA</p> 
+                                <select id="avg_gpa">
+                                    <option value="false">Not Important</option>
+                                    <option value="none" selected>None</option>
+                                    <option value="true">Important</option>
+                                </select>   
+                            </div>
+                            <div style="float:left;margin-right:30px">
+                            <p style="font-size:10px">Average Time Spent</p>
+                                <select id="avg_time">
+                                    <option value="false">Not Important</option>
+                                    <option value="none" selected>None</option>
+                                    <option value="true">Important</option>
+                                </select>
+                            </div>
+                            <div style="float:left;margin-right:30px">
+                           
+                            <p style="font-size:10px">Gap Between Classes</p> 
+                                <select id="gap">
+                                    <option value="false">Not Important</option>
+                                    <option value="none" selected>None</option>
+                                    <option value="true">Important</option>
+                                </select> 
+                            </div>
+                            <div style="float:left;margin-right:30px">
+                                
+                            <p style="font-size:10px">Class Days</p>   
+                                <select id="class_days">
+                                    <option value="false">Not Important</option>
+                                    <option value="none" selected>None</option>
+                                    <option value="true">Important</option>
+                                </select>
+                            </div>
+                            <div style="float:left;margin-right:30px">
+                                
+                            <p style="font-size:10px">Time Preference</p> 
+                                <select id="time_pref">
+                                    <option value="false">Not Important</option>
+                                    <option value="none" selected>None</option>
+                                    <option value="true">Important</option>
+                                </select>
+                            </div>                            
+                    
+                        </fieldset>
+                    </form>
+                    <p class="uk-text-right">
+                        <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                        <button onclick="transmit()" class="uk-button uk-button-primary uk-modal-close"  type="button">Generate Schedule</button>
+                    </p>
+                </div>
+            </div>
+            <div class="uk-container uk-container-medium uk-container-center uk-background-muted">
+                   
+                <div id="calendar"></div>
+                
+            <div uk-lightbox>   
+                <p class="uk-text-right">                              
+                    <a class="uk-button uk-button-primary" href="view_schedule.html" type="button">View Schedule</a>
+                   
+                </p>
+            </div>
+            </div>         
+ 
+
+        <div id="wait" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                <button class="uk-modal-close-default" type="button" uk-close></button>
+                <h2 class="uk-modal-title">Thank You For Wait</h2>
+                <span class="uk-margin-small-right" uk-spinner="ratio: 3"></span>
+                <span uk-spinner="ratio: 4.5"></span>
+         </div>
+        </div>
+
+        
+           
+        <script src="jquery.js"></script>
+<script src="jquery/jquery-ui.js"></script>
+
+  <script>
+      /*
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
+          header:{right: 'dayGridMonth,timeGridWeek'},
+          events: [
+        {
+          title: 'CSE 110',
+          startTime: '9:00:00',
+          endTime: '9:50:00',
+          daysOfWeek: [1,3,5]
+        },
+        {
+          title: 'Personal Event',
+          startTime: '11:00:00',
+          endTime: '13:00:00',
+          daysOfWeek: [1,3,5]
+        }
+      ]
+    });   
+
+     
+
+        calendar.render();
+      });
+    */
+    </script>
+
+<script>
+    $(document).ready(function(){
+      $("#myInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+    </script> 
+    <script>
+var input = document.getElementById("search"); //search function
+        // Execute a function when the user releases a key on the keyboard
+input.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    document.getElementById("search_btn").click();
+  }
+});
+    </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>   
+<script>
+$('.timepicker').timepicker({
+    timeFormat: 'HH:mm',
+    interval: 10,
+    minTime: '7',
+    maxTime: '11:00pm',
+    defaultTime: '7',
+    startTime: '5:00',
+    dynamic: false,
+    dropdown: true,
+    scrollbar: true
+});
+
+</script>
+
+
+    </body>
+    
+</html>
