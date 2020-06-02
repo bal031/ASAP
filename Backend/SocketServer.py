@@ -8,6 +8,7 @@ import json
 from time import sleep, time
 import Schedule 
 import ScheduleofClasses
+from multiprocessing import Process
 import asyncio
 
 # Global assignments, plus they need to run first. 
@@ -38,13 +39,14 @@ class User(): # implicit inheritance from object Python 3.x
         self.preferences = preferences # User chosen preferences
         self.personal_events = personal_events # User's personal events
         self.schedule = {} # set by generate schedule
+        self.data = []
 
 async def index(request):
     """
     handler for index GET requests
     """
     log('Index requested by {client_address}'.format(client_address=request.remote) )
-    with open(static_path+'index.html') as f:
+    with open(static_path+'main.html') as f:
         return web.Response(text=f.read(), content_type='text/html')
 
 @sio.on('connect')
@@ -82,25 +84,35 @@ async def receive_schedule(sid, data):
     log('Generate schedule reqeuest from: ' + session['address'])
     await sio.emit('comfirmation', 'Data Received. Optimizing Schedule...', room=sid) # NOTE typo on the UI for comfirmation, should be confirmation
     user = session['user']
-    asyncio.ensure_future(generate_schedule(input_data=data, user=user))
+    user.input_data = data
+    try:
+        sio.start_background_task(target=generate_schedule, args=user)
+    except Exception as e:
+        print('somehting went wrong : ' + str(e))
     print("\n\n NOT WAITIN\n\n")
     
-
-async def generate_schedule(input_data, user: User):
+async def generate_schedule(args):
     """
     Middle man between socket server and Schedule.py. This allows for proper asynchronous calls so we 
     don't slow down the webserver.
     Paremters: 
-        input_data: raw data string from the client. 
+        input_data: raw data string from the client.
+        user: user object pertaining to who requested the schedule
     """
-    input_dict = json.loads(input_data) 
+    user = args
+
+    input_dict = json.loads(user.input_data) 
     print('input_dict\n', input_dict)
     user_courses = input_dict['course']
     currentTerm = input_dict['currentTerm']
     personalEvents = input_dict['personalEvent']
 
+    waitlist_okay = False
+    if input_dict['waitlistStat'].upper() == 'TRUE':
+        waitlist_okay = True
+
     must_haves, could_haves = ScheduleofClasses.get_section_pairings(user_courses=user_courses, termCode=currentTerm, \
-        personalEvents=personalEvents)
+        personalEvents=personalEvents, waitlist_okay=waitlist_okay)
 
     print('must_haves:\n', must_haves, '\nwant_to_haves: \n', could_haves, '\nprefs: \n:', input_dict['preference'])
     user.schedule = Schedule.generateSchedule(must_haves=must_haves, want_to_haves=could_haves, \
@@ -111,9 +123,8 @@ async def generate_schedule(input_data, user: User):
 
     # test_schedule = json.dumps(test)
     print("Converted Schedule:\n", new_schedule)
-    test_schedule = json.dumps({'display': new_display, 'schedule': new_schedule})
-
-    await sio.emit('schedule_ready', test_schedule, room=user.sid)
+    display_schedule = json.dumps({'display': new_display, 'schedule': new_schedule})
+    await sio.emit('schedule_ready', display_schedule, room=user.sid)
     log('Sent schedule to: ' + str(user.address))
 
 def convert_schedule(user: User):
@@ -123,7 +134,7 @@ def convert_schedule(user: User):
     dayCodeDict = { 'SU' : 0, 'MO' : 1, 'TU' : 2, 'WE' : 3, 'TH' : 4, 'FR' : 5, 'SA' : 6} # days of the week constants
     new_display = [] 
     new_schedule = []
-    test = [{'id': 'personal event', 'LE id': 'personal event', 'meetings': [['WE', 1010, 1020], ['TH', 1010, 1020]], 'finals': [], 'midterms': []}, {'meetings': [['TU', 1100, 1220], ['TH', 1100, 1220], ['MO', 1100, 1150]], 'finals': ['WE', 1130, 1429], 'midterms': [], 'LE id': '016900', 'id': '016901'}]
+    # test = [{'id': 'personal event', 'LE id': 'personal event', 'meetings': [['WE', 1010, 1020], ['TH', 1010, 1020]], 'finals': [], 'midterms': []}, {'meetings': [['TU', 1100, 1220], ['TH', 1100, 1220], ['MO', 1100, 1150]], 'finals': ['WE', 1130, 1429], 'midterms': [], 'LE id': '016900', 'id': '016901'}]
     for course in user.schedule:
         ids = [course['LE id'], course['id']]
         # get meetings for both
@@ -131,7 +142,8 @@ def convert_schedule(user: User):
             for ID in ids: 
                 response = ScheduleofClasses.getSectionByID(sectionID=ID)
                 section = response['sections'][0] # only returns a single section
-                title = response['subjectCode'] + ' ' + response['courseCode'] + ' ' + section['instructionType'] + ' ' + section['sectionCode']
+                title = response['subjectCode'] + ' ' + response['courseCode'] + ' ' + section['instructionType'] +\
+                     ' ' + section['sectionCode'] 
                 daysOfWeek = []
                 for meeting in section['recurringMeetings']:
                     dayCode = dayCodeDict[meeting['dayCode']] # convert dayCode to a number e.g. SU to 0
