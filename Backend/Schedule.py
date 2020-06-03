@@ -617,17 +617,18 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 		return []
 	else:
 		for tempSchedule in schedules:
-			sectionID = parseSchedule(tempSchedule)
-			capeScores = scoreByCapes.score_by_capes(sectionID)
-			gradeTotal = 0
-			timeTotal = 0
-			ratingTotal = 0
-			for i in capeScores:
-				gradeTotal += i['grade']
-				timeTotal += i['time spent']
-				ratingTotal += i['rating']
-			capes.append({'grade':gradeTotal/len(capeScores),'rating':ratingTotal/len(capeScores),'time spent':timeTotal/len(capeScores)})
-		if(preferences['prof_rating'] == "true"):
+			if(preferences['prof_Rating'] == 'true' or preferences['avg_GPA'] == 'true' or preferences['avg_Time'] == 'true'):
+				sectionID = parseSchedule(tempSchedule)
+				capeScores = scoreByCapes.score_by_capes(sectionID)
+				gradeTotal = 0
+				timeTotal = 0
+				ratingTotal = 0
+				for i in capeScores:
+					gradeTotal += i['grade']
+					timeTotal += i['time spent']
+					ratingTotal += i['rating']
+				capes.append({'grade':gradeTotal/len(capeScores),'rating':ratingTotal/len(capeScores),'time spent':timeTotal/len(capeScores)})
+		if(preferences['prof_Rating'] == "true"):
 			totalWeights += 1
 			maxIndex = -1
 			index = -1
@@ -639,7 +640,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 					maxIndex = index
 			return schedules[maxIndex]
 
-		if(preferences['avg_gpa'] == "true"):
+		if(preferences['avg_GPA'] == "true"):
 			totalWeights += 1
 			maxIndex = -1
 			index = -1
@@ -650,7 +651,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 					gradeMax = i['grade']
 					maxIndex = index
 			return schedules[maxIndex]
-		if(preferences['avg_time'] == "true"):
+		if(preferences['avg_Time'] == "true"):
 			totalWeights += 1
 			minIndex = -1
 			index = -1
@@ -661,7 +662,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 					timeMin = i['time spent']
 					minIndex = index
 			return schedules[minIndex]
-		if(preferences['class_days'] == "false"):
+		if(preferences['class_Days'] == "false"):
 			totalWeights += 1
 			minIndex = -1
 			index = -1
@@ -672,7 +673,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 					dayMin = i
 					minIndex = index
 			return schedules[minIndex]
-		elif(preferences['class_days'] == 'true'):
+		elif(preferences['class_Days'] == 'true'):
 			totalWeights += 1
 			maxIndex = -1
 			index = -1
@@ -684,7 +685,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 					maxIndex = index
 			return schedules[maxIndex]
 
-		if(preferences['time_pref'] == "true"):
+		if(preferences['time_Ref'] == "true"):
 			totalWeights += 1
 		if(preferences['gap'] == "true"):
 			totalWeights += 1
