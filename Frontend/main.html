@@ -58,8 +58,11 @@
                             event.preventDefault();
                             var myId = $(this).prop('id');
                             document.getElementById("add_class").onclick = function() {fillList(myId)};
+                            $(this).dblclick(function(){
+                                fillList(myId);
+                            });
                          });
-                      }
+                      }                      
                    });
                 });
              </script>           
@@ -108,7 +111,7 @@
                         <option value="SP20">SPRING 2020</option>
                     </select>
 					<div class="uk-autocomplete uk-form uk-width-1-2" data-uk-autocomplete="{source:'search.json'}">
-                        <input class="uk-input uk-text-left uk-width" type="text" id="search" placeholder="Class Search">
+                        <input class="uk-input uk-text-left uk-width" uk-icon="search" type="text" id="search" placeholder="Class Search">
                         </div>
                         <button onclick="search()" id="search_btn" class="uk-button uk-button-primary uk-text-right">Search</button>                        
                     </div>
@@ -117,7 +120,7 @@
                     <div class="uk-child-width-1-2@s" uk-grid>
                         
                        <div id="selectable" class="uk-panel uk-panel-scrollable">                      
-                        <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Search Result</div>                  
+                        <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Search Result</div>                 
                                          
                    
                        </div>                       
@@ -139,29 +142,33 @@
                         <a class="uk-accordion-title uk-tile-muted" href="#">Add Personal Event</a>
                         <div class="uk-accordion-content">
                            <form id="event" autocomplete="off" >
-                            <div class="uk-grid uk-margin-bottom" id="pe_days">
+                            <div class="uk-grid uk-margin-bottom"  id="pe_days">
                                 <div class="uk-grid-small uk-child-width-auto">
                                     <label><input class="uk-checkbox" type="checkbox" value="MO"> Monday</label>
                                     <label><input class="uk-checkbox" type="checkbox" value="TU"> Tuesday</label>
                                     <label><input class="uk-checkbox" type="checkbox" value="WE"> Wednesday</label>
                                     <label><input class="uk-checkbox" type="checkbox" value="TH"> Thursday</label>
                                     <label><input class="uk-checkbox" type="checkbox" value="FI"> Friday</label>
-                                </div>  
-                                </div>
-                                <div>                               
-                                    <label>From:</label>
-                                   <input class="timepicker" id="s_time" value="">                                
-
-                                    <label>To: </label>
-                                    <input class="timepicker" id="e_time" value="">                          
-
-                                <button onclick="getPE()" id="pe_btn" type="reset" class="uk-button uk-button-primary uk-margin-left">Add Event</button>
-                            </div>
+                                </div> 
+                                 
+                                </div>                              
                                 
                         </form>           
                                 
-                            
-                          
+                        <div class="uk-grid uk-margin-bottom">                               
+                            <label class="uk-text-middle uk-text-large">From:</label>
+                           <input class="timepicker" id="s_time" value="" maxlength="4" size="3">                                
+
+                            <label class="uk-text-middle uk-text-large">To: </label>
+                            <input class="timepicker" id="e_time" value="" maxlength="4" size="3">                          
+
+                        <button onclick="getPE()" id="pe_btn" type="reset" class="uk-button uk-button-primary uk-margin-left">Add Event</button>
+                    </div> 
+                        <div id="pe_list" height="50">                      
+                                     
+                                         
+                   
+                       </div>                       
                             
                         </div>
                     </li>
@@ -171,7 +178,7 @@
                     <div class="uk-button-group">
                         <button id="add_class" onclick="" class="uk-button uk-button-secondary">Add</button>
                         <button id="remove_class" onclick="" class="uk-button uk-button-secondary">Remove</button>
-                        <button class="uk-button uk-button-secondary">Clear</button>
+                        <button onclick ="clearList()" class="uk-button uk-button-secondary">Clear</button>
                         <button class="uk-button uk-button-secondary " type="button" uk-toggle="target: #modal-example">Done</button>
                     </div>
                 </div>
@@ -185,40 +192,45 @@
                     <h2 class="uk-modal-title">Selections</h2>
                     <form id="preference">
                         <fieldset class="uk-fieldset">
-                            <div style="float:left;margin-left:10px">
-                            <p style="font-size:10px;margin-left:10px">Professor Rating</p>
+                           <div class="uk-grid-small uk-child-width-expand@s uk-text-center" uk-grid>
+                            <div class="uk-grid-small uk-width-1-1">
+                                <hr class="uk-divider-icon">
+                            </div>
+                            <div class="uk-grid-small uk-width-1-2">
+                            <label>Professor Rating</label><br>
                                 <select id="prof_rating">
                                     <option value="false" selected>No Preference</option>
                                     <option value="true">High</option>
                                 </select>
                             </div>
-                            <div style="float:left;margin-left:90px">
-                            <p style="font-size:10px;margin-left:20px">Average GPA</p> 
+                            <div class="uk-grid-small uk-width-1-2">
+                            <label>Average GPA</label> <br>
                                 <select id="avg_gpa">
                                     <option value="false" selected>No Preference</option>
                                     <option value="true">High</option>
                                 </select>   
                             </div>
-                            <div style="float:left;margin-left:90px">
-                            <p style="font-size:10px;margin-left:5px">Average Time Spent</p>
+
+                            <div class="uk-grid-small uk-width-1-2">
+                            <label>Average Time Spent</label><br>
                                 <select id="avg_time">
                                     <option value="false" selected>No Preference</option>
                                     <option value="true">Low</option>
                                 </select>
                             </div>
                             
-                            <div style="float:left;margin-left:10px">
+                            <div class="uk-grid-small uk-width-1-2">
                                 
-                            <p style="font-size:10px;margin-left:25px;margin-top:30px">Class Days</p>   
+                            <label>Class Days</label><br>   
                                 <select id="class_days">
                                     <option value="false">Less Days</option>
                                     <option value="none" selected>No Preference</option>
                                     <option value="true">More Days</option>
                                 </select>
                             </div>
-                            <div style="float:left;margin-left:90px">
-                                
-                            <p style="font-size:10px;margin-left:13px;margin-top:30px">Time Preference</p> 
+
+                            <div class="uk-grid-small uk-width-1-2">                                
+                            <label>Time Preference</label> <br>
                                 <select id="time_pref">
                                     <option value="false">Early</option>
                                     <option value="none" selected>No Preference</option>
@@ -226,16 +238,24 @@
                                 </select>
                             </div>       
 
-                            <div style="float:left;margin-left:90px">
+                            <div class="uk-grid-small uk-width-1-2">
                            
-                            <p style="font-size:10px;margin-left:3px;margin-top:30px">Gap Between Classes</p> 
+                            <label>Gap Between Classes</label> <br>
                                 <select id="gap">
                                     <option value="false">Short Gaps</option>
                                     <option value="none" selected>No Preference</option>
                                     <option value="true">Long Gaps</option>
                                 </select> 
-                            </div>                     
-                    
+                            </div> 
+                            
+                            <div class="uk-grid-small uk-width-1-1">
+                                <hr class="uk-divider-icon">
+                            </div>
+                            <div class="uk-grid-small uk-width-1-1">
+                                <label>Accept Waitlisted Course  <input class="uk-checkbox" id="waitlist_Stat" type="checkbox" value="false"></label>
+                                
+                            </div>
+                        </div>
                         </fieldset>
                     </form>
                     <p class="uk-text-right">
@@ -279,39 +299,18 @@
         var calendar = new FullCalendar.Calendar(calendarEl, {
           plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
           header:{right: 'dayGridMonth,timeGridWeek'},
-          events: [
-        {
-          title: 'CSE 110',
-          startTime: '9:00:00',
-          endTime: '9:50:00',
-          daysOfWeek: [1,3,5]
-        },
-        {
-          title: 'Personal Event',
-          startTime: '11:00:00',
-          endTime: '13:00:00',
-          daysOfWeek: [1,3,5]
-        }
-      ]
-    });   
+      
+    });       
 
-     
-
-        calendar.render();
+        
+       calendar.changeView( 'timeGridWeek');
+       calendar.addEvent(data_Load.schedule[0]);
+  calendar.render();
       });
     */
     </script>
 
-<script>
-    $(document).ready(function(){
-      $("#myInput").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $("#myTable tr").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-      });
-    });
-    </script> 
+
     <script>
 var input = document.getElementById("search"); //search function
         // Execute a function when the user releases a key on the keyboard
