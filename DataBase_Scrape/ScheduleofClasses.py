@@ -168,7 +168,7 @@ def getAccessToken():
             access_token = None
     return access_token    # return access_token
 
-def get_section_pairings(user_courses, termCode='FA20', personalEvents=None):
+def get_section_pairings(user_courses, termCode='FA20', personalEvents=None, waitlist_okay=False):
     """
     Prepares a list of sections for algorithm to use in making its selection. Similar to how its viewd on webreg
     NOTE: I am pairing lectures and discussions with the same prefix together. i.e. LE A00 and DI A01, LE A00 and DI A02, ... etc.
@@ -198,18 +198,37 @@ def get_section_pairings(user_courses, termCode='FA20', personalEvents=None):
 
         classes = []
         curr_le = dict()
+        prev = None
         for section in response['sections']:
-            if section['instructionType'] == 'LE': # new lecture A00, B00, ..., etc.
+            if section['instructionType'] in ['LE', 'SE', 'PR', 'IN'] : # new lecture A00, B00, ..., etc. Handles other main instruction types as well
+                if prev is not None: # prev was a lecture without a pair that had seats or was full and waitlist flag was true
+                    classes.append(prev)
+                    prev = None
                 curr_le['meetings'] = get_recurringMeetings(section) # recurring weekly
                 curr_le['finals'], curr_le['midterms'] = get_additionalMeetings(section) # returns [finals, midterms]
                 curr_le['LE id'] = section['sectionId'] # saves time later on getting the lecture times
+                curr_le['id'] = curr_le['LE id']
+                enrolled = section['enrolledQuantity']
+                capacity = section['capacityQuantity']
+                curr_le['waitlist'] = (enrolled == capacity)
+                if ( enrolled < capacity  or waitlist_okay) and len(section['recurringMeetings']) >0: # default to open sections only, allow user override
+                    prev = copy.deepcopy(curr_le)
+                else:
+                    prev = None
             else: # it's a DI or LA, create new LE to DI/LA pairing
-                if section['enrolledQuantity'] != section['capacityQuantity']: # only want classes with open seats
+                prev = None
+                enrolled = section['enrolledQuantity']
+                capacity = section['capacityQuantity']
+                if (enrolled < capacity or waitlist_okay) and len(section['recurringMeetings']) >0: # default to open sections only, allow user override
                     new_pair = copy.deepcopy(curr_le) # get baseline characteristics for the new pairing
                     new_pair['id'] = section['sectionId'] # LE to DI/LA pairings are identified by there DI/LA sectionId
                     new_pair['meetings'] += (get_recurringMeetings(section))
+                    new_pair['waitlist'] = (enrolled == capacity)
                     classes.append(new_pair)
                 # else skip this section, capacity is determined by DI/LA and not lecture
+        if prev is not None: # prev section was a lecture without a pair
+            classes.append(prev)
+            
         append_list.append(classes)
     return [must_haves, could_haves]
 
@@ -275,8 +294,7 @@ def get_additionalMeetings(section : dict):
 # [{"id":6,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",90000,115000]],"finals":["M",150000,180000]},{"id":7,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",90000,115000]],"finals":["M",150000,180000]},{"id":8,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",90000,115000]],"finals":["M",150000,180000]},{"id":9,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",120000,145000]],"finals":["M",150000,180000]},{"id":10,"meetings":[["TU",140000,152000],["TH",140000,152000],["W",120000,145000]],"finals":["M",150000,180000]}]
 
 
-"""
-if __name__ == "__main__": # for testing purposes
+# if __name__ == "__main__": # for testing purposes
 #     print("attempting to make a request...\n\n")
 #     # print(json.dumps((getSection(termCode='SP20', subjectCode='CSE',courseCode='110'))))
 #     # print(search(termCode='SP20', subjectCodes="CSE", courseCode="110", limit=1))
@@ -293,12 +311,13 @@ if __name__ == "__main__": # for testing purposes
 
 #     print('Course: ' + course + '\n\t' + str(instructors))
 
-#    user_courses = [{'must_have' : 'true', 'name' : 'ECE 102'},{'must_have':'true','name':'CHEM 6A'}]
-    #personal_events = [{'courseName' : 'my_time', 'startTime': 900, 'endTime': 1000, 'instructionDay' : ['TU', 'TH']}]
+#    user_course[[{'meetings': [['TU', 1100, 1220], ['TH', 1100, 1220], ['MO', 1100, 1150]], 'finals': ['WE', 1130, 1429], 'midterms': [], 'LE id': '016900', 'id': '016901'}]]s = [{'must_have' : 'true', 'name' : 'ECE 102'},{'must_have':'true','name':'CHEM 6A'}]
+#    personal_events = [{'courseName' : 'my_time', 'startTime': 900, 'endTime': 1000, 'instructionDay' : ['TU', 'TH']}]
 #    must_haves, could_haves = get_section_pairings(user_courses)
 #    print(must_haves[0])
 #    print(must_haves[1])
 #    print(could_haves)
 #    result = generateSchedule(must_haves, could_haves,[])
 #    print(result)
-"""
+# print(getMeetings(sectionID='019520'))
+# print(getSection(termCode="FA20", subjectCode='CSE', courseCode='197'))
