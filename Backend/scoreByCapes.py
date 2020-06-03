@@ -1,6 +1,6 @@
 import sys
-sys.path.append('/home/dat/ASAP/DataBase_Scrape/')
-sys.path.append('/home/dat/ASAP/Backend/database/')
+sys.path.append('/home/nate/ASAP/DataBase_Scrape/')
+sys.path.append('/home/nate/ASAP/Backend/database/')
 from ScheduleofClasses import getSectionByID
 from Database import get_database, close_database, get_capes_by_course_and_prof, get_professor_id
 
