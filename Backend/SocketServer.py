@@ -122,8 +122,8 @@ async def generate_schedule(args):
     new_display, new_schedule = convert_schedule(user)
 
     # test_schedule = json.dumps(test)
-    print("Converted Schedule:\n", new_schedule)
-    display_schedule = json.dumps({'display': new_display, 'schedule': new_schedule})
+    print("Converted Schedule:\n", new_schedule, '\n', new_display)
+    display_schedule = json.dumps({'display': new_display, 'schedule': new_schedule}) # json to string 
     await sio.emit('schedule_ready', display_schedule, room=user.sid)
     log('Sent schedule to: ' + str(user.address))
 
@@ -134,24 +134,50 @@ def convert_schedule(user: User):
     dayCodeDict = { 'SU' : 0, 'MO' : 1, 'TU' : 2, 'WE' : 3, 'TH' : 4, 'FR' : 5, 'SA' : 6} # days of the week constants
     new_display = [] 
     new_schedule = []
-    # test = [{'id': 'personal event', 'LE id': 'personal event', 'meetings': [['WE', 1010, 1020], ['TH', 1010, 1020]], 'finals': [], 'midterms': []}, {'meetings': [['TU', 1100, 1220], ['TH', 1100, 1220], ['MO', 1100, 1150]], 'finals': ['WE', 1130, 1429], 'midterms': [], 'LE id': '016900', 'id': '016901'}]
+    test = [{'meetings': [['MO', 800, 850], ['WE', 800, 850], ['FR', 800, 850], ['MO', 1300, 1350]], 'finals': ['MO', 800, 1059], 'midterms': [], 'LE id': '019478', 'id': '024475', 'waitlist': False}] 
+    '''
+   'display': [{name: 'CSE 100',
+            'professor': 'Paul Cao',
+            'days': 'MWF',
+            'start': '9:00 AM',
+            'end': '9:50 AM'}], 
+    '''
     for course in user.schedule:
-        ids = [course['LE id'], course['id']]
-        # get meetings for both
-        if ids[1] != 'personal event':
-            for ID in ids: 
-                response = ScheduleofClasses.getSectionByID(sectionID=ID)
-                section = response['sections'][0] # only returns a single section
-                title = response['subjectCode'] + ' ' + response['courseCode'] + ' ' + section['instructionType'] +\
-                     ' ' + section['sectionCode'] 
-                daysOfWeek = []
-                for meeting in section['recurringMeetings']:
-                    dayCode = dayCodeDict[meeting['dayCode']] # convert dayCode to a number e.g. SU to 0
-                    daysOfWeek.append(dayCode) # separate for debugging
-                    startTime = convertTime(meeting['startTime'])
-                    endTime = convertTime(meeting['endTime'])
-                new_schedule.append({'title': title, 'startTime': startTime, 'endTime': endTime, 'daysOfWeek': daysOfWeek})
+        if course['id'] == course['LE id']:
+            ids = [course['id']]
         else:
+            ids = [course['id'], course['LE id']]
+        # get meetings for both
+        if ids[0] != 'personal event':
+            for ID in ids: 
+                if ID != '': # skip this
+                    response = ScheduleofClasses.getSectionByID(sectionID=ID)
+                    section = response['sections'][0] # only returns a single section
+                    title = response['subjectCode'] + ' ' + response['courseCode'] + ' ' + section['instructionType'] +\
+                        ' ' + section['sectionCode'] 
+                    daysOfWeek = []
+                    daysDisplay = []
+                    professor = '' # no prof listed
+                    staff = True
+                    for prof in section['instructors']:
+                        staff = False
+                        professor += prof['instructorName'] + ' '
+                    if staff:
+                        professor = 'staff'
+                    # professor = section['instructors'][0]['instructorName']
+                    for meeting in section['recurringMeetings']:
+                        daysDisplay.append(meeting['dayCode'])
+                        dayCode = dayCodeDict[meeting['dayCode']] # convert dayCode to a number e.g. SU to 0
+                        daysOfWeek.append(dayCode) # separate for debugging
+                        startTime = convertTime(meeting['startTime'])
+                        endTime = convertTime(meeting['endTime'])
+                    enrolled = section['enrolledQuantity']
+                    capacity = section['capacityQuantity']
+                    print('enrolled: ', enrolled, ' capacity: ', capacity)
+                    waitlist = (enrolled == capacity) and capacity > 0 # stupid edge cases, I hate Schedule of Classes
+                    new_schedule.append({'title': title, 'startTime': startTime, 'endTime': endTime, 'daysOfWeek': daysOfWeek})
+                    new_display.append({'name': title, 'professor': professor, 'days':daysDisplay, 'start' : startTime, 'end': endTime, 'waitlisted': waitlist})
+        else: #personal event
             dayCode = []
             for meeting in course['meetings']:
                 dayCode.append(dayCodeDict[meeting[0]])
@@ -216,3 +242,4 @@ if __name__ == '__main__':
     # preference = {'prof_rating':'false','avg_gpa':'false','avg_time':'true','class_days':'none','time_pref':'none','gap':'none'}
     # schedules = Schedule.generateSchedule(must_takes,want_to_takes,preference)
     # print(schedules)
+    # convert_schedule(user=None)
