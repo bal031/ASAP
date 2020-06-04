@@ -1,5 +1,5 @@
 # ![ASAP Logo](resources/favicon.ico "Autoscheduler Assist Program") Autoscheduler Assist Program 
-ASAP is a web application that intends to assit a UCSD student burdened with course planning for a looming quarter. Simply select the courses you wish to take and denote any preferences (e.g. classes with high CAPE reviews) then sit back while the algorithm does all
+ASAP is a web application that intends to assist a UCSD student burdened with course planning for a looming quarter. Simply select the courses you wish to take and denote any preferences (e.g. classes with high CAPE reviews) then sit back while the algorithm does all
 of the heavy lifting of finding the best possible schedule. 
 
 ## Team ASAP
@@ -36,12 +36,12 @@ Desktop Browsers:
 ## Known Bugs
 * Generating a schedule for multiple classes with a lot of open sections will cause the system to return a valid schedule very slowly. 
 * UCSD's Schedule of Classes database may show open seats when WebReg reports a full section. This is a university problem. 
-* Classes sometimes do not have meeting times scheduled or they're denoted as "TBA" thus a schedule cannot be generated where those are included.  
+* Classes sometimes do not have meeting times scheduled or they're denoted as "TBA". Thus a schedule cannot be generated where those are included.  
 
 ## How It Works
-Once the user selects there classes and clicks generate the list is sent to the server where all of the processing will occur. The server queries the Schedule of Classes Database getting the most recent class times and current enrollment then passes it over to the algorithm where the section selection takes place. 
+Once the user selects their classes and clicks generate, the list is sent to the server where all of the processing will occur. The server queries the Schedule of Classes Database, gets the most recent class times and current enrollment, then passes it over to the algorithm where the section selection takes place. 
 
-The algorithm grabs information of each section that are offered for the courses the user selected. It then iterates over all combinations of sections of must-take user courses. If a must-take course cannot be accommodated, the schedule with those sections is marked as invalid and tossed away. Once a valid schedule of must-take sections is found, the algorithm proceeds to place sections want-to-take user courses into the existing must-take schedule. If a want-to-take course cannot be accommodated, the schedule remains valid. The valid schedule with the most want-to-takes fitted is returned. If there are multiple valid schedules with the most want-to-takes, each schedule is scored based on selected preferences, and the one with the highest score is returned.
+The algorithm grabs information of each section that is offered for the courses selected by the user. It then iterates over all combinations of sections of must-take user courses. If a must-take course cannot be accommodated, the schedule with those sections is marked as invalid and tossed away. Once a valid schedule of must-take sections is found, the algorithm proceeds to place sections want-to-take user courses into the existing must-take schedule. If a want-to-take course cannot be accommodated, the schedule remains valid. The valid schedule with the most want-to-takes fitted is returned. If there are multiple valid schedules with the most want-to-takes, each schedule is scored based on selected preferences, and the one with the highest score is returned.
 
 
 # Building and Deploying a Server Instance
