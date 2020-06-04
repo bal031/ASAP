@@ -40,6 +40,9 @@ $(document).ready(function(){
       tr.push("<td>" + data_Load.display[i].name + "</td>");
       tr.push("<td>" + data_Load.display[i].professor + "</td>");
       tr.push("<td>" + data_Load.display[i].days+" "+data_Load.display[i].start+"-"+data_Load.display[i].end + "</td>");
+      if (data_Load.display[i].waitlisted==true){
+        tr.push("<td><span class=\"uk-margin-small-right\" uk-icon=\"check\"> </span></td>");
+      }
       tr.push("<td>" + " " + "</td>");
       tr.push('</tr>');
     }
@@ -99,7 +102,7 @@ socket.on("schedule_ready", function(data){
     calendar.addEventSource( data_Load.schedule);
     
   calendar.render();
-  UIkit.notification("Successful Build Schedule.", {status:'success'}); 
+  UIkit.notification("Successfully Built Schedule", {status:'success'}); 
   
 });
 }); 
@@ -116,7 +119,7 @@ function transmit(){
 
   window.localStorage.clear();
   var user_data = {currentTerm: term, course: courses, personalEvent:p_Event, preference: p_Preference, waitlistStat:waitlist};
-  
+  console.log("sent package:", user_data);
   console.log(user_data);
   UIkit.notification("(*ˊᗜˋ*)/ᵗᑋᵃᐢᵏ ᵞᵒᵘ* For Waiting", {status:'primary'})
   
@@ -196,27 +199,29 @@ function clearList(){
       });
 
       if(end<=start||startStr==""||endStr==""||days.length==0){
-        UIkit.notification("¯\(°_o)/¯ Invalid input. Better luck next time. ", {status:'warning'});
+        UIkit.notification("¯\\(°_o)/¯ Invalid input. Better luck next time. ", {status:'warning'});
         return; 
       }
       
+      var rand = Math.floor(Math.random() * 1000) + 1; 
       
-      
-        var personal_event = { courseName: "my_time"+p_Event.length, 
+        var personal_event = { courseName: "my_time", 
                                 sectionID: "000000", 
                                 instructionType:"NA", 
                                 instructionDay: days,
                                 startTime: start, 
-                                endTime:end};  
+                                endTime:end,
+                                personalId: rand};  
        //p_Event.push(personal_event); 
        document.getElementById('event').reset();
        p_Event.push(personal_event);
       
       var index = p_Event.length-1;
+        
       var div = [];
-      var id = "\"pe_item" + index +"\"";
+      var id = "\"pe_item" + index+rand +"\"";
       
-      var html = "<div id="+id+">Personal Event   from:"+startStr+ " to "+ endStr + " Days: "+dayStr+"<button onclick=removePE("+index+")>delete event</button></div>";
+      var html = "<div id="+id+">Personal Event   from:"+startStr+ " to "+ endStr + " Days: "+dayStr+"<button onclick=removePE("+rand+","+index+")>delete event</button></div>";
       div.push(html);
       $('#pe_list').append($(div.join('')));
       //console.log(personal_event); // display on console for debugging only
@@ -229,9 +234,9 @@ function clearList(){
       //});
       }
 
-      function removePE(id){
-        var name= 'pe_item'+id;
-        var val = 'my_time'+id;
+      function removePE(rand,id){
+        var name= 'pe_item'+id+rand;
+        var val = rand;
         
         document.getElementById(name).remove();        
         p_Event = removeFromArray(p_Event,val);
@@ -242,7 +247,7 @@ function clearList(){
       
        for(i=0; i<array.length;i++)
        {
-         if (array[i].courseName!=value)
+         if (array[i].personalId!=value)
          {
            temp.push(array[i]);
          }
@@ -269,27 +274,4 @@ function clearList(){
       $("a").click(function(event){
         event.preventDefault();
       });
-
-
-   /*
-   <script>var availableTags = [
-    "CSE",
-    "BDE",
-    "ENG",
-    "CSE 12",
-    "CSE 21",
-    "ECE 15",
-    "CSE 100",
-    "CSE 110",
-    "CSE 140L",
-    "ECE 144",
-    "WAR 1",
-    "REL 101",
-    
-];
-$( "#search" ).autocomplete({
-    source: availableTags
-});
-</script>
-*/
 
