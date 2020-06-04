@@ -1,4 +1,4 @@
-# ![ASAP Logo](resources/favicon.ico "Autoscheduler Assist Program") Autoscheduler Assist Program 
+# ![image](resources/favicon.ico "Autoscheduler Assist Program") Autoscheduler Assist Program 
 ASAP is a web application that intends to ease the burden of a UCSD student amidst course planning for a looming quarter. Simply select the courses you wish to take and denote any preferences (e.g. classes with high CAPE reviews) then sit back while the algorithm does all
 of the heavy lifting of finding the best possible schedule. 
 
