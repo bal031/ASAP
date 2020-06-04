@@ -5,7 +5,7 @@ of the heavy lifting of finding the best possible schedule.
 ## Team ASAP
 * James Li - @JamesOnEarth - Senior System Analyst
 * Yiyan Chen - @YiyanChen - Algorithm Specialist
-* Levent Horvath - @lhorvath13 - Project Manager
+* Levente Horvath - @lhorvath13 - Project Manager
 * Nathan Krause - @N-T-K - Software Architect
 * Dan Liu - @DanchengLiu - Business Analyst 
 * Brian Lu - @bal031 - Software Development Lead
