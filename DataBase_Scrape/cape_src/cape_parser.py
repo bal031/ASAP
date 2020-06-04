@@ -43,6 +43,7 @@ def main():
             float(result.avg_grade_exp), float(result.avg_grade_rec), float(result.study_hrs),
             float(result.rec_class.split()[0]), float(result.rec_instr.split()[0]), float(result.response), result.term,
             asap_database)
+    Database.close_database(asap_database)
 
 
 def parse_file(file, results):
