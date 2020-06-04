@@ -45,6 +45,7 @@ The algorithm grabs information of each section that are offered for the courses
 
 
 # Building and Deploying a Server Instance
+Note: This application was initially developed and deployed on a CentOS 8 virtual machine. 
 
 Python Server and Processing
 ---
@@ -64,7 +65,7 @@ Installation should be done in a virtual environment or with a package manager s
 
 In order to start the server open port 80 on the OS firewall. For CentOS 8
 
-`$ firewall-cmd --zone=public --add-service=http`
+`$ sudo firewall-cmd --zone=public --add-service=http`
 
 Now to start the program execute order 66
 
