@@ -196,6 +196,9 @@ def get_section_pairings(user_courses, termCode='FA20', personalEvents=None, wai
         subjectCode, courseCode = [section['name'].split(' ')[i] for i in (0, 1)]  # get subjectCode and courseCode
         response = getSection(termCode=termCode, subjectCode=subjectCode, courseCode=courseCode) # query schedule of classes
 
+        if response.get('message', None) is not None: # course doesn't exist for current termCode
+            continue # go to next course in list
+
         classes = []
         curr_le = dict()
         prev = None
@@ -323,4 +326,4 @@ def get_additionalMeetings(section : dict):
 
 # print(getSection(termCode="FA20", subjectCode='CSE', courseCode='95'), '\n\n')
 
-# print(get_section_pairings(user_courses=[{'name': 'CSE 95', 'must_have': 'true'}]))
+# print(get_section_pairings(user_courses=[{'name': 'CSE 95', 'must_have': 'true'}],termCode='S120'))
