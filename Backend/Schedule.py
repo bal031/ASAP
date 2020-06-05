@@ -15,8 +15,8 @@ def schedule(must_haves, want_to_haves, scoreByDays, scoreByTime, scoreByGaps):
 	days = []
 	earlyTimes = []
 	lateTimes = []
-	smallestGap = []
-	largestGap = []
+	totalGaps = []
+
 	for section1 in must_haves[0]:
 		for section2 in must_haves[1]:
 			for section3 in must_haves[2]:
@@ -587,13 +587,11 @@ def schedule(must_haves, want_to_haves, scoreByDays, scoreByTime, scoreByGaps):
 																			earlyTimes.append(earliestTime)
 																			lateTimes.append(latestTime)
 																		if(scoreByGaps == True):
-																			minGap, maxGap = scoreGaps([jointMonday,jointTuesday,jointWednesday,jointThursday,jointFriday,jointSaturday,jointSunday])
-																			smallestGap.append(minGap)
-																			largestGap.append(maxGap)
+																			totalGaps.append(scoreGaps([jointMonday,jointTuesday,jointWednesday,jointThursday,jointFriday,jointSaturday,jointSunday]))
 
 
 	
-	return schedules, days, earlyTimes, lateTimes, smallestGap, largestGap
+	return schedules, days, earlyTimes, lateTimes, totalGaps
 
 def scoreDays(days):
 	numDays = 0
@@ -615,21 +613,16 @@ def scoreTime(days):
 	return earliestTime, latestTime
 
 def scoreGaps(days):
-	minGap = 2400
-	maxGap = 0
+	totalGaps = 0
 	for day in days:
 		lastEnd = None
 		for end,start in sorted( (end,start) for start,end in day ):
 			if(lastEnd == None):
 				lastEnd = end
 			else:
-				gap = start - last_end
-				if(gap < minGap):
-					minGap = gap
-				if(gap > maxGap):
-					maxGap = gap
-				lastEnd = end
-	return minGap, maxGap
+				totalGaps += (start - lastEnd)
+				
+	return totalGaps
 			
 
 
@@ -653,7 +646,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 	if(preferences['gap'] == 'false' or preferences['gap'] == 'true'):
 		scoreByGaps = True
 
-	schedules, days, earlyTimes, lateTimes, smallestGap, largestGap = schedule(tempMustHaves, tempWantHaves, scoreByDays, scoreByTime, scoreByGaps)
+	schedules, days, earlyTimes, lateTimes, totalGaps = schedule(tempMustHaves, tempWantHaves, scoreByDays, scoreByTime, scoreByGaps)
 	capes = []
 
 	if(len(schedules) == 0):
@@ -774,8 +767,8 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 				index = -1
 				for i in maxSchedules:
 					index += 1
-					if(smallestGap[i] < gapMin):
-						gapMin = smallestGap[i]
+					if(totalGaps[i] < gapMin):
+						gapMin = totalGaps[i]
 						minIndex = index
 				scores[minIndex] += 1
 			elif(preferences['gap'] == 'true'):
@@ -784,8 +777,8 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 				index = -1
 				for i in maxSchedules:
 					index += 1
-					if(largestGap[i] > gapMax):
-						gapMax = largestGap[i]
+					if(totalGaps[i] > gapMax):
+						gapMax = totalGaps[i]
 						maxIndex = index
 				scores[maxIndex] += 1
 
@@ -827,10 +820,10 @@ def main():
 
 
 	#Start time, end time, index
-	must_takes=[[{'id': 'personal event', 'meetings': [], 'finals': [], 'midterms': []}], [{'meetings': [['MO',110,120]], 'finals': [], 'midterms': [], 'LE id': '016900', 'id': '020992'},{'meetings': [], 'finals': [], 'midterms': [], 'LE id': '016900', 'id': '021177'},{'meetings':[['MO',110,120],['TU',110,120]],'finals':[],'id':'020706'}]]
+	must_takes=[[{'meetings': [['MO', 1700, 1820], ['WE', 1700, 1820], ['MO', 1600, 1650]], 'finals': ['FR', 1900, 2159], 'midterms': [], 'LE id': '016910', 'id': '016911', 'waitlist': False}, {'meetings': [['MO', 1700, 1820], ['WE', 1700, 1820], ['FR', 1200, 1250]], 'finals': ['FR', 1900, 2159], 'midterms': [], 'LE id': '016910', 'id': '016912', 'waitlist': False}]] 
 
 	want_to_takes=[]
-	preference = {'prof_Rating':'false','avg_GPA':'false','avg_Time':'false','class_Days':'none','time_Ref':'none','gap':'false'}
+	preference = {'prof_Rating': 'false', 'avg_GPA': 'false', 'avg_Time': 'false', 'gap': 'true', 'class_Days': 'none', 'time_Ref': 'none'}
 	schedules = generateSchedule(must_takes,want_to_takes,preference)
 	print(schedules)
 	#max = 0
