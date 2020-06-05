@@ -667,7 +667,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 			counter += 1
 			if(len(tempSchedule) == maxLength):
 				maxSchedules.append(counter)
-				scores[counter]=0
+				scores[counter]=10000
 
 		
 		if(len(maxSchedules) == 1):
@@ -836,7 +836,7 @@ def main():
 	must_takes=[[{'meetings': [['MO', 1700, 1820], ['WE', 1700, 1820], ['MO', 1600, 1650]], 'finals': ['FR', 1900, 2159], 'midterms': [], 'LE id': '016910', 'id': '016911', 'waitlist': False}, {'meetings': [['MO', 1700, 1820], ['WE', 1700, 1820], ['FR', 1200, 1250]], 'finals': ['FR', 1900, 2159], 'midterms': [], 'LE id': '016910', 'id': '016912', 'waitlist': False}]] 
 
 	want_to_takes=[]
-	preference = {'prof_Rating': 'true', 'avg_GPA': 'true', 'avg_Time': 'true', 'gap': 'none', 'class_Days': 'none', 'time_Ref': 'none'}
+	preference = {'prof_Rating': 'false', 'avg_GPA': 'false', 'avg_Time': 'false', 'gap': 'none', 'class_Days': 'none', 'time_Ref': 'none'}
 	schedules = generateSchedule(must_takes,want_to_takes,preference)
 	print(schedules)
 	#max = 0
