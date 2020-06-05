@@ -277,7 +277,7 @@ def get_additionalMeetings(section : dict):
     Returns: [final, midterms] where a final is an array of meeningful info and midterms is an array of meetings
     """
     midterms = []
-    final = None
+    final = []
     for meeting in section['additionalMeetings']:
         dayCode = meeting['dayCode']
         startTime = int(meeting['startTime'])
@@ -320,4 +320,7 @@ def get_additionalMeetings(section : dict):
 #    result = generateSchedule(must_haves, could_haves,[])
 #    print(result)
 # print(getMeetings(sectionID='019520'))
-# print(getSection(termCode="FA20", subjectCode='CSE', courseCode='197'))
+
+# print(getSection(termCode="FA20", subjectCode='CSE', courseCode='95'), '\n\n')
+
+# print(get_section_pairings(user_courses=[{'name': 'CSE 95', 'must_have': 'true'}]))
