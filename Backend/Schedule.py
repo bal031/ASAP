@@ -1,6 +1,6 @@
 import scoreByCapes
 
-def schedule_day(meetings):
+def scheduleDay(meetings):
     last_end = -1
     for end,start in sorted( (end,start) for start,end in meetings ):
         if start >= last_end:
@@ -10,22 +10,13 @@ def schedule_day(meetings):
 
     return True
 
-def checkConflict(meetings,optional):
-    last_end = -1
-    joint = meetings + optional
-    for end,start in sorted( (end,start) for start,end in joint ):
-        if start >= last_end:
-            last_end = end
-        elif start < last_end:
-        	return True
-
-    return False
-
-
-def schedule(must_haves, want_to_haves):
-	result = False;
+def schedule(must_haves, want_to_haves, scoreByDays, scoreByTime, scoreByGaps):
 	schedules = []
 	days = []
+	earlyTimes = []
+	lateTimes = []
+	smallestGap = []
+	largestGap = []
 	for section1 in must_haves[0]:
 		for section2 in must_haves[1]:
 			for section3 in must_haves[2]:
@@ -297,8 +288,8 @@ def schedule(must_haves, want_to_haves):
 											elif(section8['finals'][0] == 'SU'):
 												finalSunday.append(section8['finals'][1:])
 
-									if(schedule_day(monday) == True and schedule_day(tuesday) == True and schedule_day(wednesday) == True and schedule_day(thursday) == True and schedule_day(friday) == True and schedule_day(saturday) == True and schedule_day(sunday) == True and schedule_day(finalMonday) == True and schedule_day(finalTuesday) == True and schedule_day(finalWednesday) == True and schedule_day(finalThursday) == True and schedule_day(finalFriday) == True and schedule_day(finalSaturday) == True and schedule_day(finalSunday) == True):
-										result = True;
+									if(scheduleDay(monday) == True and scheduleDay(tuesday) == True and scheduleDay(wednesday) == True and scheduleDay(thursday) == True and scheduleDay(friday) == True and scheduleDay(saturday) == True and scheduleDay(sunday) == True and 
+									   scheduleDay(finalMonday) == True and scheduleDay(finalTuesday) == True and scheduleDay(finalWednesday) == True and scheduleDay(finalThursday) == True and scheduleDay(finalFriday) == True and scheduleDay(finalSaturday) == True and scheduleDay(finalSunday) == True):
 
 										for optional1 in want_to_haves[0]:
 											for optional2 in want_to_haves[1]:
@@ -546,7 +537,16 @@ def schedule(must_haves, want_to_haves):
 																			elif(optional7['finals'][0] == 'SU'):
 																				optionalFinalSunday.append(optional7['finals'][1:])
 
-																	if(checkConflict(monday,optionalMonday) == False and checkConflict(tuesday,optionalTuesday) == False and checkConflict(wednesday,optionalWednesday) == False and checkConflict(thursday,optionalThursday) == False and checkConflict(friday,optionalFriday) == False and checkConflict(saturday,optionalSaturday) == False and checkConflict(sunday,optionalSunday) == False and checkConflict(monday,optionalFinalMonday) == False and checkConflict(tuesday,optionalFinalTuesday) == False and checkConflict(wednesday,optionalFinalWednesday) == False and checkConflict(thursday,optionalFinalThursday) == False and checkConflict(friday,optionalFinalFriday) == False and checkConflict(saturday,optionalFinalSaturday) == False and checkConflict(sunday,optionalFinalSunday) == False):
+																	jointMonday = monday + optionalMonday
+																	jointTuesday = tuesday + optionalTuesday
+																	jointWednesday = wednesday + optionalWednesday
+																	jointThursday = thursday + optionalThursday
+																	jointFriday = friday + optionalFriday
+																	jointSaturday = saturday + optionalSaturday
+																	jointSunday = sunday + optionalSunday
+
+																	if(scheduleDay(jointMonday) == True and scheduleDay(jointTuesday) == True and scheduleDay(jointWednesday) == True and scheduleDay(jointThursday) == True and scheduleDay(jointFriday) == True and scheduleDay(jointSaturday) == True and scheduleDay(jointSunday) == True and
+																	   scheduleDay(finalMonday+optionalFinalMonday) == True and scheduleDay(finalTuesday+optionalFinalTuesday) == True and scheduleDay(finalWednesday+optionalFinalWednesday) == True and scheduleDay(finalThursday+optionalFinalThursday) == True and scheduleDay(finalFriday+optionalFinalFriday) == True and scheduleDay(finalSaturday+optionalFinalSaturday) == True and scheduleDay(finalSunday+optionalFinalSunday) == True):
 																		schedule = []
 																		if(section1 != None):
 																			schedule.append(section1)
@@ -579,25 +579,58 @@ def schedule(must_haves, want_to_haves):
 																		if(optional7 != None):
 																			schedule.append(optional7)
 																		schedules.append(schedule)
-																		day = 0
-																		if(len(monday) != 0 or len(optionalMonday) != 0):
-																			day += 1
-																		if(len(tuesday) != 0 or len(optionalTuesday) != 0):
-																			day += 1
-																		if(len(wednesday) != 0 or len(optionalWednesday) != 0):
-																			day += 1
-																		if(len(thursday) != 0 or len(optionalThursday) != 0):
-																			day += 1
-																		if(len(friday) != 0 or len(optionalFriday) != 0):
-																			day += 1
-																		if(len(saturday) != 0 or len(optionalSaturday) != 0):
-																			day += 1
-																		if(len(sunday) != 0 or len(optionalSunday) != 0):
-																			day += 1
-																		days.append(day)
+																		
+																		if(scoreByDays == True):
+																			days.append(scoreDays([jointMonday,jointTuesday,jointWednesday,jointThursday,jointFriday,jointSaturday,jointSunday]))
+																		if(scoreByTime == True):
+																			earliestTime, latestTime = scoreTime([jointMonday,jointTuesday,jointWednesday,jointThursday,jointFriday,jointSaturday,jointSunday])
+																			earlyTimes.append(earliestTime)
+																			lateTimes.append(latestTime)
+																		if(scoreByGaps == True):
+																			minGap, maxGap = scoreGaps([jointMonday,jointTuesday,jointWednesday,jointThursday,jointFriday,jointSaturday,jointSunday])
+																			smallestGap.append(minGap)
+																			largestGap.append(maxGap)
+
 
 	
-	return schedules, days
+	return schedules, days, earlyTimes, lateTimes, smallestGap, largestGap
+
+def scoreDays(days):
+	numDays = 0
+	for day in days:
+		if(len(day) != 0):
+			numDays += 1
+	return numDays
+
+def scoreTime(days):
+	earliestTime = 2400
+	latestTime = 0
+	for day in days:
+		for meeting in day:
+			if(meeting[0] < earliestTime):
+				earliestTime = meeting[0]
+			if(meeting[1] > latestTime):
+				latestTime = meeting[1]
+
+	return earliestTime, latestTime
+
+def scoreGaps(days):
+	minGap = 2400
+	maxGap = 0
+	for day in days:
+		lastEnd = None
+		for end,start in sorted( (end,start) for start,end in day ):
+			if(lastEnd == None):
+				lastEnd = end
+			else:
+				gap = start - last_end
+				if(gap < minGap):
+					minGap = gap
+				if(gap > maxGap):
+					maxGap = gap
+				lastEnd = end
+	return minGap, maxGap
+			
 
 
 def generateSchedule(must_haves,want_to_haves,preferences):
@@ -609,87 +642,162 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 		i.append(None)
 	while(len(tempWantHaves) < 7):
 		tempWantHaves.append([None])
-	schedules, days = schedule(tempMustHaves, tempWantHaves)
-	totalWeights = 0
+	
+	scoreByDays = False
+	scoreByTime = False
+	scoreByGaps = False
+	if(preferences['class_Days'] == 'false' or preferences['class_Days'] == 'true'):
+		scoreByDays = True
+	if(preferences['time_Ref'] == 'false' or preferences['time_Ref'] == 'true'):
+		scoreByTime = True
+	if(preferences['gap'] == 'false' or preferences['gap'] == 'true'):
+		scoreByGaps = True
+
+	schedules, days, earlyTimes, lateTimes, smallestGap, largestGap = schedule(tempMustHaves, tempWantHaves, scoreByDays, scoreByTime, scoreByGaps)
 	capes = []
 
 	if(len(schedules) == 0):
 		return []
-	else:
-		for tempSchedule in schedules:
-			if(preferences['prof_Rating'] == 'true' or preferences['avg_GPA'] == 'true' or preferences['avg_Time'] == 'true'):
-				sectionID = parseSchedule(tempSchedule)
-				capeScores = scoreByCapes.score_by_capes(sectionID)
-				gradeTotal = 0
-				timeTotal = 0
-				ratingTotal = 0
-				for i in capeScores:
-					gradeTotal += i['grade']
-					timeTotal += i['time spent']
-					ratingTotal += i['rating']
-				capes.append({'grade':gradeTotal/len(capeScores),'rating':ratingTotal/len(capeScores),'time spent':timeTotal/len(capeScores)})
-		if(preferences['prof_Rating'] == "true"):
-			totalWeights += 1
-			maxIndex = -1
-			index = -1
-			ratingMax = 0
-			for i in capes:
-				index += 1
-				if(i['rating'] > ratingMax):
-					ratingMax = i['rating']
-					maxIndex = index
-			return schedules[maxIndex]
-
-		if(preferences['avg_GPA'] == "true"):
-			totalWeights += 1
-			maxIndex = -1
-			index = -1
-			gradeMax = 0
-			for i in capes:
-				index += 1
-				if(i['grade'] > gradeMax):
-					gradeMax = i['grade']
-					maxIndex = index
-			return schedules[maxIndex]
-		if(preferences['avg_Time'] == "true"):
-			totalWeights += 1
-			minIndex = -1
-			index = -1
-			timeMin = 10000
-			for i in capes:
-				index += 1
-				if(i['time spent'] < timeMin):
-					timeMin = i['time spent']
-					minIndex = index
-			return schedules[minIndex]
-		if(preferences['class_Days'] == "false"):
-			totalWeights += 1
-			minIndex = -1
-			index = -1
-			dayMin = 7
-			for i in days:
-				index += 1
-				if(i < dayMin):
-					dayMin = i
-					minIndex = index
-			return schedules[minIndex]
-		elif(preferences['class_Days'] == 'true'):
-			totalWeights += 1
-			maxIndex = -1
-			index = -1
-			dayMax = 0
-			for i in days:
-				index += 1
-				if(i > dayMax):
-					dayMax = i
-					maxIndex = index
-			return schedules[maxIndex]
-
-		if(preferences['time_Ref'] == "true"):
-			totalWeights += 1
-		if(preferences['gap'] == "true"):
-			totalWeights += 1
+	elif(len(schedules) == 1):
 		return schedules[0]
+	else:
+		maxSections = 0
+		maxLength = 0
+		maxSchedules = []
+		scores = []
+
+		for tempSchedule in schedules:
+			if(len(tempSchedule) > maxLength):
+				maxLength= len(tempSchedule)
+		counter = -1
+		for tempSchedule in schedules:
+			counter += 1
+			if(len(tempSchedule) == maxLength):
+				maxSchedules.append(counter)
+				scores.append(0)
+
+		
+		if(len(maxSchedules) == 1):
+			return schedules[maxSchedules[0]]
+		else:
+			for i in maxSchedules:
+				if(preferences['prof_Rating'] == 'true' or preferences['avg_GPA'] == 'true' or preferences['avg_Time'] == 'true'):
+					sectionID = parseSchedule(schedules[i])
+					capeScores = scoreByCapes.score_by_capes(sectionID)
+					gradeTotal = 0
+					timeTotal = 0
+					ratingTotal = 0
+					for i in capeScores:
+						gradeTotal += i['grade']
+						timeTotal += i['time spent']
+						ratingTotal += i['rating']
+					capes.append({'grade':gradeTotal/len(capeScores),'rating':ratingTotal/len(capeScores),'time spent':timeTotal/len(capeScores)})
+			
+			if(preferences['prof_Rating'] == "true"):
+				maxIndex = -1
+				index = -1
+				ratingMax = 0
+				for i in capes:
+					index += 1
+					if(i['rating'] > ratingMax):
+						ratingMax = i['rating']
+						maxIndex = index
+				scores[maxIndex] += 1
+
+			if(preferences['avg_GPA'] == "true"):
+				maxIndex = -1
+				index = -1
+				gradeMax = 0
+				for i in capes:
+					index += 1
+					if(i['grade'] > gradeMax):
+						gradeMax = i['grade']
+						maxIndex = index
+				scores[maxIndex] += 1
+
+			if(preferences['avg_Time'] == "true"):
+				minIndex = -1
+				index = -1
+				timeMin = 10000
+				for i in capes:
+					index += 1
+					if(i['time spent'] < timeMin):
+						timeMin = i['time spent']
+						minIndex = index
+				scores[maxIndex] += 1
+
+			if(preferences['class_Days'] == "false"):
+				minIndex = -1
+				dayMin = 7
+				index = -1
+				for i in maxSchedules:
+					index += 1
+					if(days[i] < dayMin):
+						dayMin = days[i]
+						minIndex = index
+				scores[minIndex] += 1
+			elif(preferences['class_Days'] == 'true'):
+				maxIndex = -1
+				dayMax = 0
+				index = -1
+				for i in maxSchedules:
+					index += 1
+					if(days[i] > dayMax):
+						dayMax = days[i]
+						maxIndex = index
+				scores[maxIndex] += 1
+
+			if(preferences['time_Ref'] == "false"):
+				minIndex = -1
+				timeMin = 2400
+				index = -1
+				for i in maxSchedules:
+					index += 1
+					if(earlyTimes[i] < timeMin):
+						timeMin = earlyTimes[i]
+						minIndex = index
+				scores[minIndex] += 1
+			elif(preferences['time_Ref'] == 'true'):
+				maxIndex = -1
+				timeMax = 0
+				index = -1
+				for i in maxSchedules:
+					index += 1
+					if(lateTimes[i] > timeMax):
+						timeMax = lateTimes[i]
+						maxIndex = index
+				scores[maxIndex] += 1
+
+			if(preferences['gap'] == "false"):
+				minIndex = -1
+				gapMin = 2400
+				index = -1
+				for i in maxSchedules:
+					index += 1
+					if(smallestGap[i] < gapMin):
+						gapMin = smallestGap[i]
+						minIndex = index
+				scores[minIndex] += 1
+			elif(preferences['gap'] == 'true'):
+				maxIndex = -1
+				gapMax = 0
+				index = -1
+				for i in maxSchedules:
+					index += 1
+					if(largestGap[i] > gapMax):
+						gapMax = largestGap[i]
+						maxIndex = index
+				scores[maxIndex] += 1
+
+			maxScore = 0 
+			maxIndex = -1
+			index = -1
+			for i in scores:
+				index += 1
+				if(i > maxScore):
+					maxScore = i
+					maxIndex = index
+			return schedules[maxSchedules[maxIndex]]
 
 
 def parseSchedule(schedule):
@@ -722,7 +830,7 @@ def main():
 	must_takes=[[{'id': 'personal event', 'meetings': [], 'finals': [], 'midterms': []}], [{'meetings': [['MO',110,120]], 'finals': [], 'midterms': [], 'LE id': '016900', 'id': '020992'},{'meetings': [], 'finals': [], 'midterms': [], 'LE id': '016900', 'id': '021177'},{'meetings':[['MO',110,120],['TU',110,120]],'finals':[],'id':'020706'}]]
 
 	want_to_takes=[]
-	preference = {'prof_rating':'false','avg_gpa':'false','avg_time':'false','class_days':'false','time_pref':'none','gap':'none'}
+	preference = {'prof_Rating':'false','avg_GPA':'false','avg_Time':'false','class_Days':'none','time_Ref':'none','gap':'false'}
 	schedules = generateSchedule(must_takes,want_to_takes,preference)
 	print(schedules)
 	#max = 0
