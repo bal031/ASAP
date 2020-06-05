@@ -657,7 +657,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 		maxSections = 0
 		maxLength = 0
 		maxSchedules = []
-		scores = []
+		scores = {}
 
 		for tempSchedule in schedules:
 			if(len(tempSchedule) > maxLength):
@@ -667,7 +667,7 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 			counter += 1
 			if(len(tempSchedule) == maxLength):
 				maxSchedules.append(counter)
-				scores.append(0)
+				scores[counter]=0
 
 		
 		if(len(maxSchedules) == 1):
@@ -684,113 +684,123 @@ def generateSchedule(must_haves,want_to_haves,preferences):
 						gradeTotal += i['grade']
 						timeTotal += i['time spent']
 						ratingTotal += i['rating']
-					capes.append({'grade':gradeTotal/len(capeScores),'rating':ratingTotal/len(capeScores),'time spent':timeTotal/len(capeScores)})
+					capes.append({'grade':gradeTotal,'rating':ratingTotal,'time spent':timeTotal})
 			
 			if(preferences['prof_Rating'] == "true"):
-				maxIndex = -1
+				ranking = []
 				index = -1
-				ratingMax = 0
 				for i in capes:
 					index += 1
-					if(i['rating'] > ratingMax):
-						ratingMax = i['rating']
-						maxIndex = index
-				scores[maxIndex] += 1
+					ranking.append([maxSchedules[index],i['rating']])
+				sorted_ranking = sorted(ranking, key=take_second, reverse=True)
+				index = 0
+				for i in sorted_ranking:
+					index += 1
+					scores[i[0]] += index
+				
 
 			if(preferences['avg_GPA'] == "true"):
-				maxIndex = -1
+				ranking = []
 				index = -1
-				gradeMax = 0
 				for i in capes:
 					index += 1
-					if(i['grade'] > gradeMax):
-						gradeMax = i['grade']
-						maxIndex = index
-				scores[maxIndex] += 1
+					ranking.append([maxSchedules[index],i['grade']])
+				sorted_ranking = sorted(ranking, key=take_second, reverse=True)
+				index = 0
+				for i in sorted_ranking:
+					index += 1
+					scores[i[0]] += index
+
 
 			if(preferences['avg_Time'] == "true"):
-				minIndex = -1
+				ranking = []
 				index = -1
-				timeMin = 10000
 				for i in capes:
 					index += 1
-					if(i['time spent'] < timeMin):
-						timeMin = i['time spent']
-						minIndex = index
-				scores[maxIndex] += 1
+					ranking.append([maxSchedules[index],i['time spent']])
+				sorted_ranking = sorted(ranking, key=take_second)
+				index = 0
+				for i in sorted_ranking:
+					index += 1
+					scores[i[0]] += index
 
 			if(preferences['class_Days'] == "false"):
-				minIndex = -1
-				dayMin = 7
+				ranking = []
 				index = -1
 				for i in maxSchedules:
 					index += 1
-					if(days[i] < dayMin):
-						dayMin = days[i]
-						minIndex = index
-				scores[minIndex] += 1
+					ranking.append([i,days[i]])
+				sorted_ranking = sorted(ranking, key=take_second)
+				index = 0
+				for i in sorted_ranking:
+					index += 1
+					scores[i[0]] += index
 			elif(preferences['class_Days'] == 'true'):
-				maxIndex = -1
-				dayMax = 0
+				ranking = []
 				index = -1
 				for i in maxSchedules:
 					index += 1
-					if(days[i] > dayMax):
-						dayMax = days[i]
-						maxIndex = index
-				scores[maxIndex] += 1
+					ranking.append([i,days[i]])
+				sorted_ranking = sorted(ranking, key=take_second, reverse=True)
+				index = 0
+				for i in sorted_ranking:
+					index += 1
+					scores[i[0]] += index
 
 			if(preferences['time_Ref'] == "false"):
-				minIndex = -1
-				timeMin = 2400
+				ranking = []
 				index = -1
 				for i in maxSchedules:
 					index += 1
-					if(earlyTimes[i] < timeMin):
-						timeMin = earlyTimes[i]
-						minIndex = index
-				scores[minIndex] += 1
+					ranking.append([i,earlyTimes[i]])
+				sorted_ranking = sorted(ranking, key=take_second)
+				index = 0
+				for i in sorted_ranking:
+					index += 1
+					scores[i[0]] += index
 			elif(preferences['time_Ref'] == 'true'):
-				maxIndex = -1
-				timeMax = 0
+				ranking = []
 				index = -1
 				for i in maxSchedules:
 					index += 1
-					if(lateTimes[i] > timeMax):
-						timeMax = lateTimes[i]
-						maxIndex = index
-				scores[maxIndex] += 1
+					ranking.append([i,lateTimes[i]])
+				sorted_ranking = sorted(ranking, key=take_second, reverse=True)
+				index = 0
+				for i in sorted_ranking:
+					index += 1
+					scores[i[0]] += index
+
 
 			if(preferences['gap'] == "false"):
-				minIndex = -1
-				gapMin = 2400
+				ranking = []
 				index = -1
 				for i in maxSchedules:
 					index += 1
-					if(totalGaps[i] < gapMin):
-						gapMin = totalGaps[i]
-						minIndex = index
-				scores[minIndex] += 1
+					ranking.append([i,totalGaps[i]])
+				sorted_ranking = sorted(ranking, key=take_second)
+				index = 0
+				for i in sorted_ranking:
+					index += 1
+					scores[i[0]] += index
 			elif(preferences['gap'] == 'true'):
-				maxIndex = -1
-				gapMax = 0
+				ranking = []
 				index = -1
 				for i in maxSchedules:
 					index += 1
-					if(totalGaps[i] > gapMax):
-						gapMax = totalGaps[i]
-						maxIndex = index
-				scores[maxIndex] += 1
+					ranking.append([i,totalGaps[i]])
+				sorted_ranking = sorted(ranking, key=take_second, reverse=True)
+				index = 0
+				for i in sorted_ranking:
+					index += 1
+					scores[i[0]] += index
 
-			maxScore = 0 
-			maxIndex = -1
-			index = -1
-			for i in scores:
-				index += 1
-				if(i > maxScore):
-					maxScore = i
-					maxIndex = index
-			return schedules[maxSchedules[maxIndex]]
+			minRank = 10000
+			minIndex = -1
+			for x in scores:
+				if(scores[x] < minRank):
+					minRank = scores[x]
+					minIndex = x
+			return schedules[minIndex]
 
 
 def parseSchedule(schedule):
@@ -799,6 +809,9 @@ def parseSchedule(schedule):
 		if(i['id'] != 'personal event'):
 			sectionIDs.append(i['id'])
 	return sectionIDs
+
+def take_second(elem):
+	return elem[1]
 
 def main():
 	# Must-takes/Personal Events
@@ -823,7 +836,7 @@ def main():
 	must_takes=[[{'meetings': [['MO', 1700, 1820], ['WE', 1700, 1820], ['MO', 1600, 1650]], 'finals': ['FR', 1900, 2159], 'midterms': [], 'LE id': '016910', 'id': '016911', 'waitlist': False}, {'meetings': [['MO', 1700, 1820], ['WE', 1700, 1820], ['FR', 1200, 1250]], 'finals': ['FR', 1900, 2159], 'midterms': [], 'LE id': '016910', 'id': '016912', 'waitlist': False}]] 
 
 	want_to_takes=[]
-	preference = {'prof_Rating': 'false', 'avg_GPA': 'false', 'avg_Time': 'false', 'gap': 'true', 'class_Days': 'none', 'time_Ref': 'none'}
+	preference = {'prof_Rating': 'true', 'avg_GPA': 'true', 'avg_Time': 'true', 'gap': 'none', 'class_Days': 'none', 'time_Ref': 'none'}
 	schedules = generateSchedule(must_takes,want_to_takes,preference)
 	print(schedules)
 	#max = 0
