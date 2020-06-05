@@ -37,6 +37,7 @@ Desktop Browsers:
 * Generating a schedule for multiple classes with a lot of open sections will cause the system to return a valid schedule very slowly. 
 * UCSD's Schedule of Classes database may show open seats when WebReg reports a full section. This is a university problem. 
 * Classes sometimes do not have meeting times scheduled or they're denoted as "TBA". Thus a schedule cannot be generated where those are included.  
+* The user is able to add classes into the class list that are not offered for the currently selected term. However, the schedule will not return a valid schedule if the class doesn't exist for that quarter which is expected bahavior. 
 
 ## How It Works
 Once the user selects their classes and clicks generate, the list is sent to the server where all of the processing will occur. The server queries the Schedule of Classes Database, gets the most recent class times and current enrollment, then passes it over to the algorithm where the section selection takes place. 
