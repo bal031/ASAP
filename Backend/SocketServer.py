@@ -86,7 +86,7 @@ async def receive_schedule(sid, data):
     user = session['user']
     user.input_data = data
     try:
-        sio.start_background_task(target=generate_schedule, args=user)
+        sio.start_background_task(target=generate_schedule, args=user) # this library's use of asyncio is questionable. 
     except Exception as e:
         print('somehting went wrong : ' + str(e))
     print("\n\n NOT WAITIN\n\n")
@@ -134,7 +134,7 @@ def convert_schedule(user: User):
     dayCodeDict = { 'SU' : 0, 'MO' : 1, 'TU' : 2, 'WE' : 3, 'TH' : 4, 'FR' : 5, 'SA' : 6} # days of the week constants
     new_display = [] 
     new_schedule = []
-    test = [{'meetings': [['MO', 800, 850], ['WE', 800, 850], ['FR', 800, 850], ['MO', 1300, 1350]], 'finals': ['MO', 800, 1059], 'midterms': [], 'LE id': '019478', 'id': '024475', 'waitlist': False}] 
+    test = [{'id': 'personal event', 'meetings': [['MO', 700, 730], ['WE', 700, 730]], 'finals': [], 'midterms': [], 'LE id': 'personal event'}, {'meetings': [['TU', 1100, 1220], ['TH', 1100, 1220], ['MO', 1100, 1150]], 'finals': ['WE', 1130, 1429], 'midterms': [], 'LE id': '016900', 'id': '016901', 'waitlist': False}] 
     '''
    'display': [{name: 'CSE 100',
             'professor': 'Paul Cao',
@@ -171,10 +171,10 @@ def convert_schedule(user: User):
                         daysOfWeek.append(dayCode) # separate for debugging
                         startTime = convertTime(meeting['startTime'])
                         endTime = convertTime(meeting['endTime'])
-                    enrolled = section['enrolledQuantity']
-                    capacity = section['capacityQuantity']
-                    print('enrolled: ', enrolled, ' capacity: ', capacity)
-                    waitlist = (enrolled == capacity) and capacity > 0 # stupid edge cases, I hate Schedule of Classes
+                    # enrolled = section['enrolledQuantity']
+                    # capacity = section['capacityQuantity']
+                    # print('enrolled: ', enrolled, ' capacity: ', capacity)
+                    waitlist = course['waitlist']# (enrolled == capacity) and capacity > 0 # stupid edge cases, I hate Schedule of Classes
                     new_schedule.append({'title': title, 'startTime': startTime, 'endTime': endTime, 'daysOfWeek': daysOfWeek})
                     new_display.append({'name': title, 'professor': professor, 'days':daysDisplay, 'start' : startTime, 'end': endTime, 'waitlisted': waitlist})
         else: #personal event
@@ -183,7 +183,7 @@ def convert_schedule(user: User):
                 dayCode.append(dayCodeDict[meeting[0]])
                 startTime = convertTime(str(meeting[1]))
                 endTime = convertTime(str(meeting[2]))
-            new_schedule.append({'title': ids[1], 'startTime': startTime, 'endTime': endTime, 'daysOfWeek': dayCode})
+            new_schedule.append({'title': ids[0], 'startTime': startTime, 'endTime': endTime, 'daysOfWeek': dayCode, 'waitlisted': False})
     
     return [new_display, new_schedule]
 

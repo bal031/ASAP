@@ -46,6 +46,7 @@ The algorithm grabs information of each section that is offered for the courses 
 
 # Building and Deploying a Server Instance
 Note: This application was initially developed and deployed on a CentOS 8 virtual machine. 
+Keys and other authentication items need for API and database access are not included in the repository. 
 
 Python Server and Processing
 ---
