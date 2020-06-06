@@ -13,6 +13,8 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <link rel="stylesheet" href="css/uikit.min.css" />
         <script src="js/uikit.min.js"></script>
+
+        <link rel="stylesheet" href="css/style.css" />
         
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
 
@@ -34,41 +36,16 @@
         <script src='packages/list/main.js'></script>
 
         <link href='packages/core/main.css' rel='stylesheet' />
-<link href='packages/daygrid/main.css' rel='stylesheet' />
-<link href='packages/timegrid/main.css' rel='stylesheet' />
-<link href='packages/list/main.css' rel='stylesheet' />
-<script src='packages/core/main.js'></script>
-<script src='packages/interaction/main.js'></script>
-<script src='packages/daygrid/main.js'></script>
-<script src='packages/timegrid/main.js'></script>
-<script src='packages/list/main.js'></script>
-        <style>
-            
-            #selectable .ui-selecting { background: rgb(160, 160, 160); }
-            #selectable .ui-selected { background: rgb(104, 104, 104); color: white; }
-            
-            #course-list .ui-selecting { background: rgb(160, 160, 160); }
-            #course-list .ui-selected { background: rgb(104, 104, 104); color: white; }
-            
-            </style>
-           
-            <script>
-                $(function() {
-                   $( "#selectable" ).selectable({
-                      selected: function() {
-                         var result = $( "#result" ).empty();
-                         $( ".ui-selected", this ).each(function() {
-                            event.preventDefault();
-                            var myId = $(this).prop('id');
-                            document.getElementById("add_class").onclick = function() {fillList(myId)};
-                            $(this).dblclick(function(){
-                                fillList(myId);
-                            });
-                         });
-                      }                      
-                   });
-                });
-             </script>           
+        <link href='packages/daygrid/main.css' rel='stylesheet' />
+        <link href='packages/timegrid/main.css' rel='stylesheet' />
+        <link href='packages/list/main.css' rel='stylesheet' />
+        <script src='packages/core/main.js'></script>
+        <script src='packages/interaction/main.js'></script>
+        <script src='packages/daygrid/main.js'></script>
+        <script src='packages/timegrid/main.js'></script>
+        <script src='packages/list/main.js'></script>
+        
+                      
         
     </head>
     <body>
@@ -97,11 +74,11 @@
      sizes="(min-width: 100px) 400px, 100vw" width="300" height="" alt="" uk-align="middle" uk-img>
             </div>
             <div class="uk-margin-small-top ">
-                <ul class="uk-flex-center" uk-tab>
+                <ul class="uk-flex-center uk-tab">
                     <li class="uk-active"><a href="#">Home</a></li>
-                    <li><a href="#">What's New</a></li>
-                    <li><a href="#">Support</a></li>
-                    <li><a href="#">About Us</a></li>
+                    <li><a href="whatsnew.html">What's New</a></li>
+                    <li><a href="support.html">Support</a></li>
+                    <li><a href="about.html">About Us</a></li>
                     <li><a href="#">Login</a></li>
                 </ul>
             </div>
@@ -119,27 +96,28 @@
                         <button onclick="search()" id="search_btn" class="uk-button uk-button-primary uk-text-right">Search</button>                        
                     </div>
                 </div>
-                <div class="uk-container uk-container-small uk-container-center ">
-                    <div class="uk-child-width-1-2@s" uk-grid>
-                        
-                       <div id="selectable" class="uk-panel uk-panel-scrollable">                      
-                        <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Search Result</div>                 
-                                         
-                   
-                       </div>                       
+                <div class="uk-container uk-container-small uk-container-center">
+                    <div class="uk-child-width-expand@s" uk-grid>
+                        <div class="uk-width-1-2@s">
+                        <label class="uk-text-small uk-text-bold uk-padding-remove-bottom">Search Result</label>  
+                       <div id="selectable" class="uk-panel uk-panel-scrollable"> </div>               
+                       </div>
+                                          
                             
-                       
-                        <div id="course-list" class="uk-background-muted uk-scrollable-box">                                                       
-                            <div class="uk-text-small uk-text-bold uk-padding-remove-bottom">Must Have  &nbsp &nbsp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  Class</div>
-                                               
-                    </div>               
+                       <div class="uk-width-1-2@s ">
+                        <label class="uk-text-small uk-text-bold uk-padding-remove-bottom">Must Have   &nbsp&nbsp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  Class</label>
+                        <div id="course-list" class="uk-background-muted uk-scrollable-box"></div>                                                      
+                            
+                        </div>                     
+                    </div> 
+                </div>                  
                 
                 </div>  
                    
-                    </div>               
+                                 
                          
                    
-                </div>
+                
                 <ul uk-accordion class="uk-container uk-container-center uk-container-small uk-margin-bottom">
                     <li class="uk-close">
                         <a class="uk-accordion-title uk-tile-muted" href="#">Add Personal Event</a>
@@ -160,12 +138,12 @@
                                 
                         <div class="uk-grid uk-margin-bottom">                               
                             <label class="uk-text-middle uk-text-large">From:</label>
-                           <input class="timepicker" id="s_time" value="" maxlength="4" size="3">                                
+                           <input class="timepicker" id="s_time" value="" size="3">                                
 
                             <label class="uk-text-middle uk-text-large">To: </label>
-                            <input class="timepicker" id="e_time" value="" maxlength="4" size="3">                          
+                            <input class="timepicker" id="e_time" value=""  size="3">                          
 
-                        <button onclick="getPE()" id="pe_btn" type="reset" class="uk-button uk-button-primary uk-margin-left">Add Event</button>
+                        <button onclick="addPE()" id="pe_btn" type="reset" class="uk-button uk-button-primary uk-margin-left">Add Event</button>
                     </div> 
                         <div id="pe_list" height="50">                      
                                      
@@ -187,7 +165,7 @@
                 </div>
                 </form>
             
-            </div>
+            
              
             
             <div id="modal-example" uk-modal>
@@ -200,14 +178,14 @@
                                 <hr class="uk-divider-icon">
                             </div>
                             <div class="uk-grid-small uk-width-1-3">
-                            <label>Professor Rating</label><br>
+                            <label>Professor Rating</label>
                                 <select id="prof_rating">
                                     <option value="false" selected>No Preference</option>
                                     <option value="true">High</option>
                                 </select>
                             </div>
                             <div class="uk-grid-small uk-width-1-3">
-                            <label>Average GPA</label> <br>
+                            <label>Average GPA</label> 
                                 <select id="avg_gpa">
                                     <option value="false" selected>No Preference</option>
                                     <option value="true">High</option>
@@ -215,7 +193,7 @@
                             </div>
 
                             <div class="uk-grid-small uk-width-1-3">
-                            <label>Average Time Spent</label><br>
+                            <label>Average Time Spent</label>
                                 <select id="avg_time">
                                     <option value="false" selected>No Preference</option>
                                     <option value="true">Low</option>
@@ -224,7 +202,7 @@
                             
                             <div class="uk-grid-small uk-width-1-3">
                                 
-                            <label>Class Days</label><br>   
+                            <label>Class Days</label>  
                                 <select id="class_days">
                                     <option value="false">Less Days</option>
                                     <option value="none" selected>No Preference</option>
@@ -233,7 +211,7 @@
                             </div>
 
                             <div class="uk-grid-small uk-width-1-3">                                
-                            <label>Time Preference</label> <br>
+                            <label>Time Preference</label>
                                 <select id="time_pref">
                                     <option value="false">Early</option>
                                     <option value="none" selected>No Preference</option>
@@ -243,7 +221,7 @@
 
                             <div class="uk-grid-small uk-width-1-3">
                            
-                            <label>Gap Between Classes</label> <br>
+                            <label>Gap Between Classes</label>
                                 <select id="gap">
                                     <option value="false">Short Gaps</option>
                                     <option value="none" selected>No Preference</option>
@@ -255,7 +233,7 @@
                                 <hr class="uk-divider-icon">
                             </div>
                             <div class="uk-grid-small uk-width-1-1">
-                                <label>Accept Waitlisted Course  <input class="uk-checkbox" id="waitlist_Stat" type="checkbox" value="false"></label>
+                                <label>Include Waitlisted Course  <input class="uk-checkbox" id="waitlist_Stat" type="checkbox" value="false"></label>
                                 
                             </div>
                         </div>
@@ -294,26 +272,7 @@
         <script src="jquery.js"></script>
 <script src="jquery/jquery-ui.js"></script>
 
-  <script>
-      /*
-      document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-          plugins: ['interaction', 'dayGrid', 'timeGrid', 'list'],
-          header:{right: 'dayGridMonth,timeGridWeek'},
-      
-    });       
-
-        
-       calendar.changeView( 'timeGridWeek');
-       calendar.addEvent(data_Load.schedule[0]);
-  calendar.render();
-      });
-    */
-    </script>
-
-
+ 
     <script>
 var input = document.getElementById("search"); //search function
         // Execute a function when the user releases a key on the keyboard

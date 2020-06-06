@@ -1,5 +1,5 @@
     //var socket = io.connect('http://localhost:3000');
-    var socket = io.connect('http://asap.ucsd.edu');
+    var socket = io.connect('http://asap.ucsd.edu:80');
     // Client to server holders
     var user_data = [];
     var p_Event = []; 
@@ -14,10 +14,31 @@
     
     function search(){
     $(document).ready(function(){       
-      $('#selectable').html('');     
+      $('#selectable').html('');
+      var file;
+      // Select
+      getTerm();
+      
+      if (term == "FA20")
+      {
+        file = "search.json";
+      }
+      else if (term == "S120")
+      {
+        file = "summer1.json";
+      }
+      else if (term == "S220")
+      {
+        file = "summer2.json";
+      }
+      else if (term == "SP20")
+      {
+        file = "spring.json"
+      }  
+      console.log("file:", file);    
       var searchField = $('#search').val();
       var expression = new RegExp(searchField, "i");
-      $.getJSON('search.json', function(data) {
+      $.getJSON(file, function(data) {
        $.each(data, function(key, value){
         if (value.name.search(expression) != -1)
         {
@@ -30,6 +51,19 @@
 }
 
 $(document).ready(function(){
+  $( '#selectable ').selectable({
+     selected: function() {
+       
+        $( ".ui-selected", this ).each(function() {           
+           var myId = $(this).prop('id');
+           document.getElementById(myId).ondblclick = function() {fillList(myId)};  
+           document.getElementById("add_class").onclick = function() {fillList(myId)};     
+        });
+     }                      
+  });
+});
+
+$(document).ready(function(){
   var Load = window.sessionStorage.getItem('json');
   console.log(Load);
   data_Load = JSON.parse(Load);
@@ -39,11 +73,15 @@ $(document).ready(function(){
       tr.push('<tr>');
       tr.push("<td>" + data_Load.display[i].name + "</td>");
       tr.push("<td>" + data_Load.display[i].professor + "</td>");
-      tr.push("<td>" + data_Load.display[i].days+" "+data_Load.display[i].start+"-"+data_Load.display[i].end + "</td>");
-      if (data_Load.display[i].waitlisted==true){
-        tr.push("<td><span class=\"uk-margin-small-right\" uk-icon=\"check\"> </span></td>");
+      tr.push("<td>" + data_Load.display[i].days+" "+formatTime(data_Load.display[i].start)+"-"+formatTime(data_Load.display[i].end) + "</td>");
+      if (data_Load.display[i].waitlisted!=false){
+        tr.push("<td class=\"uk-text-center\"><span class=\"uk-margin-medium-right\" uk-icon=\"check\"></span></td>");
       }
-      tr.push("<td>" + " " + "</td>");
+      else
+      {
+        tr.push("<td>" + " " + "</td>");
+      }
+      
       tr.push('</tr>');
     }
   $('#class_schedule').append($(tr.join('')));
@@ -93,12 +131,7 @@ socket.on("schedule_ready", function(data){
     UIkit.notification("Sorry (✖╭╮✖)!!! There doesn't seem to be a schedule that fit this preference. Please try again.", {status:'primary'});
     return; 
 }
-      
-    // Adding Events recieved
-   /* for(i=0; i< data_Load.schedule.length; i++)
-    {
-      calendar.addEvent(data_Load.schedule[i]);
-    }  */
+
     calendar.addEventSource( data_Load.schedule);
     
   calendar.render();
@@ -136,7 +169,8 @@ function transmit(){
 }
 
 function getTerm(){
-  term = $("#cur_term").val();  
+  term = $("#cur_term").val();
+  //document.getElementById("cur_term").disabled = true;
 }
 
 function getWaitListStat(){
@@ -153,35 +187,32 @@ function getPreference(){
 
 function getCourses(){
     
-    var count = 1;
+    //var count = 1;
     
     $('#course-list').find('li').each(function() {
       var $this = $(this);
       // checkbox id   
-      var x = '#must_have_' + count;  
-      
+      //var x = '#must_have_' + count;  
+      var x = '#mh_'+$this.prop('id').replace(" ",'');
+      console.log("must have", x)
       var checkState = $(x).is(":checked") ? "true" : "false";
     
       var course = { name: $this.attr('id'), must_have: checkState};  
       courses.push(course); 
-      count++;
+      //count++;
     });
     
     console.log(courses); // display on console for debugging only
-    //localStorage.setItem('SelectedCourses', JSON.stringify(courses));
-    /*
-    socket.on('connect', function(data) {
-      socket.emit('generate schedule', JSON.stringify(courses));
-     
-    });*/
+    
     }
+
 function clearList(){
   $('#course-list').find('li').each(function(){
     var $this = $(this);
     $this.remove();
   })
 }
-    function getPE(){
+    function addPE(){
       event.preventDefault();
       
       var count = 1;
@@ -219,7 +250,7 @@ function clearList(){
       var index = p_Event.length-1;
         
       var div = [];
-      var id = "\"pe_item" + index+rand +"\"";
+      var id = "\"pe_item" + index+rand+"\"";
       
       var html = "<div id="+id+">Personal Event   from:"+startStr+ " to "+ endStr + " Days: "+dayStr+"<button onclick=removePE("+rand+","+index+")>delete event</button></div>";
       div.push(html);
@@ -236,10 +267,9 @@ function clearList(){
 
       function removePE(rand,id){
         var name= 'pe_item'+id+rand;
-        var val = rand;
-        
+                
         document.getElementById(name).remove();        
-        p_Event = removeFromArray(p_Event,val);
+        p_Event = removeFromArray(p_Event,rand);
       }
 
       function removeFromArray(array, value) {
@@ -262,16 +292,45 @@ function clearList(){
         var name = new String(courseName);
         var id = "\"" + courseName +"\"";
         var count = document.querySelectorAll("#course-list li").length+1;
-        var name = 'must_have_' + count;
+        console.log("count of much_have",count);
+        //var name = 'must_have_' + count;
+        var name = 'mh_'+courseName.replace(" ",'');
+        console.log("fillList", name);
         var str = "\""+name+"\"";
-        html = "<li id="+id+">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="+str+" type=\"checkbox\" checked>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+courseName+"</li>";
+        html = "<li id="+id+">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<input id="+str+" type=\"checkbox\" value=\"true\" checked>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp"+courseName+"</li>";
         li.push(html);
         $('#course-list').append($(li.join('')));
  
   document.getElementById(courseName).remove();
 }
 
-      $("a").click(function(event){
+    /*  $("a").click(function(event){
         event.preventDefault();
-      });
+      });*/
 
+      function formatTime(h_24) {
+        console.log("time:", h_24);
+        var str;
+        var min;
+        if (h_24.length>=7)
+        {
+          str = h_24.substr(0,1);
+          //min = h_24.su
+        }
+        str = h_24.substr(0,2);
+        var num = parseInt(str,10);
+        console.log("num",num);
+        var hr=" ";
+        //str = str.substr(3,5);
+        var h = num % 12;
+        if( h === 0){ h = 12;}
+        if( num < 10) {
+          str = h_24;
+          hr = str.substr(0,4);}
+        else {
+          str = h_24.substr(3,2);
+          hr = h+":"+str;
+        }
+
+        return  hr + (num < 12 ? 'AM' : 'PM');
+    }
