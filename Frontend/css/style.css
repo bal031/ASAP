@@ -1,0 +1,5 @@
+#selectable .ui-selecting { background: rgb(160, 160, 160); }
+#selectable .ui-selected { background: rgb(104, 104, 104); color: white; }
+
+#course-list .ui-selecting { background: rgb(160, 160, 160); }
+#course-list .ui-selected { background: rgb(104, 104, 104); color: white; }
