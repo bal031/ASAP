@@ -5,7 +5,7 @@ sys.path.append('/home/nate/ASAP/Log')
 sys.path.append('/home/nate/ASAP/DataBase_Scrape/')
 from LogASAP import log, setup_log, LogASAP, LOG_ERROR, LOG_INFO
 import json
-from time import sleep, time
+from time import time
 import Schedule 
 import ScheduleofClasses
 from multiprocessing import Process
@@ -88,8 +88,7 @@ async def receive_schedule(sid, data):
     try:
         sio.start_background_task(target=generate_schedule, args=user) # this library's use of asyncio is questionable. 
     except Exception as e:
-        print('somehting went wrong : ' + str(e))
-    print("\n\n NOT WAITIN\n\n")
+        log('Something went wrong', level=LOG_ERROR, err_str=str(e))
     
 async def generate_schedule(args):
     """
@@ -102,7 +101,7 @@ async def generate_schedule(args):
     user = args
 
     input_dict = json.loads(user.input_data) 
-    print('input_dict\n', input_dict)
+    log('input_dict\n' + str(input_dict))
     user_courses = input_dict['course']
     currentTerm = input_dict['currentTerm']
     personalEvents = input_dict['personalEvent']
@@ -111,18 +110,24 @@ async def generate_schedule(args):
     if input_dict['waitlistStat'].upper() == 'TRUE':
         waitlist_okay = True
 
+    start_time = time()
     must_haves, could_haves = ScheduleofClasses.get_section_pairings(user_courses=user_courses, termCode=currentTerm, \
         personalEvents=personalEvents, waitlist_okay=waitlist_okay)
+    log(message='get_section_pairings took ' + str(round(time()-start_time,5)))
 
-    print('must_haves:\n', must_haves, '\nwant_to_haves: \n', could_haves, '\nprefs: \n:', input_dict['preference'])
+    log('must_haves:\n' + str(must_haves) + '\nwant_to_haves: \n' + str(could_haves) + '\nprefs: \n:' + str(input_dict['preference']))
+    
+    start_time = time()
     user.schedule = Schedule.generateSchedule(must_haves=must_haves, want_to_haves=could_haves, \
         preferences=input_dict['preference'])
-    print('Schedule: \n', user.schedule) # save raw output of schedule
+    log(message='generateSchedule took'+ str(round(time()-start_time,5)))
+    
+    log('Schedule: \n' + str(user.schedule)) # save raw output of schedule
 
     new_display, new_schedule = convert_schedule(user)
 
     # test_schedule = json.dumps(test)
-    print("Converted Schedule:\n", new_schedule, '\n', new_display)
+    log("Converted Schedule:\n" + str(new_schedule) + '\n' + str(new_display))
     display_schedule = json.dumps({'display': new_display, 'schedule': new_schedule}) # json to string 
     await sio.emit('schedule_ready', display_schedule, room=user.sid)
     log('Sent schedule to: ' + str(user.address))
