@@ -28,7 +28,6 @@ def score_by_capes(sectionIDs):
         instructor_name = instructor_name.replace('\'', '')
         instructor_name = instructor_name.replace(']', '')
         capes = get_capes_by_course_and_prof(subject_code, course_code, instructor_name , database)
-        print(len(capes)) 
         grade_sum = 0
         grade_count = 0
         rating_sum = 0
@@ -40,7 +39,6 @@ def score_by_capes(sectionIDs):
                 if key == "received_grade":
                     if(capes[i][key] != -1):
                         grade_sum += capes[i][key]
-                        print(capes[i][key])
                         grade_count += 1
                 if key == "recommend_professor":
                     rating_sum += capes[i][key]
@@ -70,7 +68,7 @@ def score_by_capes(sectionIDs):
 
 if __name__ == "__main__":
     # execute only if run as a script
-    sectionIDs = ["022251", "022252"]	
+    sectionIDs = ["020992", "022252"]	
     section_rating_list = score_by_capes(sectionIDs)
     for dictionary in section_rating_list:
         for key in dictionary:
